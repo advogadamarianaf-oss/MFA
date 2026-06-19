@@ -78,7 +78,7 @@
 
     /* ── SEARCH ── */
     .search-wrap {
-      flex: 1; max-width: 400px; position: relative;
+      max-width: 240px; position: relative; flex-shrink: 0;
     }
     .search-input {
       width: 100%; height: 36px;
@@ -130,6 +130,22 @@
     }
     .nav-gh:hover { color: var(--text); border-color: var(--text-tertiary); }
     .nav-gh svg { width: 16px; height: 16px; }
+
+    /* ── NAV LINKS (inline) ── */
+    .nav-links { display: flex; gap: 4px; overflow-x: auto; flex-shrink: 1; min-width: 0; }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-links a {
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 13px; font-weight: 500;
+      padding: 6px 10px; border-radius: 6px;
+      white-space: nowrap; transition: all 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--bg-secondary); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-light); }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+    }
     @media (max-width: 640px) {
       .nav-gh span { display: none; }
       .nav-gh { padding: 6px 8px; }
@@ -367,9 +383,16 @@
       </button>
       <a href="{{ '/' | relative_url }}" class="nav-logo"><span>MFA</span> Docs</a>
 
+      <div class="nav-links">
+        {% assign pages = site.pages | where_exp: "p", "p.nav_order" | sort: "nav_order" %}
+        {% for p in pages %}
+        <a href="{{ p.url | relative_url }}" {% if page.url == p.url %}class="active"{% endif %}>{{ p.nav_title | default: p.title }}</a>
+        {% endfor %}
+      </div>
+
       <div class="search-wrap">
         <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
-        <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar paginas..." autocomplete="off">
+        <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar..." autocomplete="off">
         <span class="search-kbd">/</span>
         <div class="search-results" id="searchResults"></div>
       </div>
