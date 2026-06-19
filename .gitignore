@@ -1,0 +1,56 @@
+# Credenciais (NUNCA versionar)
+.env
+gcred.json
+
+# Dados pessoais de clientes (PII - telefone, email, conversas)
+clientes/*.md
+!clientes/_MODELO_CLIENTE.md
+Resumos/
+ErrorLeads/
+Reclassificacao_CRM/
+_auditoria_canal_duplo/
+Perguntas_Conversao/
+Auditorias/
+
+# Indice de clientes (contem nomes reais)
+_memoria/indice_clientes.md
+
+# Dados de API (grandes, regeneraveis, contem PII)
+entrada/
+!entrada/.gitkeep
+
+# Planilhas com dados pessoais
+*.xlsx
+*.csv
+*.tsv
+
+# Logs
+pipeline_log.txt
+*.log
+
+# Resultados grandes / regeneraveis
+leads_processados.json
+_msg_diagnostico.json
+auditoria_resultado.json
+auditoria_resumo.md
+
+# Arquivos temporarios
+_tmp_dup/
+__pycache__/
+*.pyc
+*.tmp
+_xlsx_b64.txt
+b64_multiline.txt
+b64_xlsx.txt
+matches.json
+note.txt
+crm_batch*.txt
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Claude Code (configuracao local + cache)
+.claude/settings.local.json
+**/cache_transcricoes.json
