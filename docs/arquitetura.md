@@ -1,4 +1,20 @@
+---
+title: Arquitetura
+layout: default
+nav_order: 3
+description: "Diagrama de componentes, fluxo de dados e modos de operacao do MFA"
+---
+
 # Arquitetura
+{: .no_toc }
+
+## Indice
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Diagrama de Componentes
 
@@ -92,7 +108,7 @@ Resumos gerados
 O escritorio recebe leads por 3 bots/fluxos no Atende Direito:
 
 | Canal | Flow ID | Descricao |
-|-------|---------|-----------|
+|:------|:--------|:----------|
 | Comercial - API OFICIAL | `f175863` | Principal (formulario web, Meta Ads) |
 | Comercial 2 - API OFICIAL | `f270363` | Secundario (WhatsApp direto) |
 | SAC | `f229905` | Suporte / pos-venda |
@@ -103,7 +119,7 @@ consolida tudo em **um unico arquivo** por pessoa.
 ## Modos de Operacao
 
 | Modo | Quando usar | Como roda |
-|------|-------------|-----------|
+|:-----|:------------|:----------|
 | **Pipeline diario** | Atualizacao em massa, todos os dias | `pipeline_diario.py` (agendado 13h, sem Claude) |
 | **Analise por skill** | Leads especificos, analise profunda | Claude Code + Claude in Chrome (sob demanda) |
 | **Analise em lote** | Planilha inteira, em lotes de 5 | Skill `processar-planilha` (orquestrador + agentes) |

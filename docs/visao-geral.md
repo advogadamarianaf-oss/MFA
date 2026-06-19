@@ -1,4 +1,20 @@
+---
+title: Visao Geral
+layout: default
+nav_order: 2
+description: "O que e o projeto MFA, o problema resolvido e os resultados alcancados"
+---
+
 # Visao Geral
+{: .no_toc }
+
+## Indice
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## O Problema
 
@@ -28,7 +44,7 @@ O **MFA (Mensagem, Funil, Analise)** e um sistema hibrido que combina:
 ## Resultados
 
 | Metrica | Antes | Depois |
-|---------|-------|--------|
+|:--------|:------|:-------|
 | Tempo por lead (analise) | ~15 min manual | ~2 min (automatico) |
 | Leads analisados/dia | 10-15 | 50+ (em lotes de 5) |
 | Atualizacao da planilha | manual, 1x/semana | automatica, diaria 13h |

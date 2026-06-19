@@ -1,8 +1,25 @@
+---
+title: Pipeline Diario
+layout: default
+nav_order: 8
+description: "Documentacao do pipeline_diario.py — automacao de coleta, analise e escrita na planilha"
+---
+
 # Pipeline Diario
+{: .no_toc }
 
 O `pipeline_diario.py` e o script de automacao principal. Roda na maquina do
 usuario (sem Claude), agendado para todos os dias as 13h via Agendador de Tarefas
 do Windows.
+{: .fs-6 .fw-300 }
+
+## Indice
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## O que faz (em sequencia)
 
@@ -57,25 +74,26 @@ Cria uma tarefa no Agendador de Tarefas do Windows (`schtasks`) que roda
 
 ## Dependencias
 
-```
+```bash
 pip install google-auth google-api-python-client
 ```
 
 ## Credenciais Necessarias
 
 | Credencial | Arquivo | Para que |
-|------------|---------|----------|
+|:-----------|:--------|:---------|
 | `MINHA_API_KEY` | `.env` | API do Atende Direito (Bearer token) |
 | Google Service Account | `gcred.json` | Leitura/escrita na planilha Google |
 
-A conta de servico Google precisa estar compartilhada como **Editor** na planilha.
+{: .warning }
+> A conta de servico Google precisa estar compartilhada como **Editor** na planilha.
 
 ## Logica de Casamento (matching)
 
 Cada aba usa um campo diferente para encontrar o subscriber:
 
 | Aba | Campo na planilha | Logica |
-|-----|-------------------|--------|
+|:----|:------------------|:-------|
 | CAMPANHA META | TELEFONE | Normaliza digitos, remove DDI 55, compara ultimos 10 |
 | CAMPANHA GOOGLE | ATENDE DIREITO ID | Compara user_ns diretamente |
 | ORGANICO | ATENDE DIREITO ID | Compara user_ns diretamente |
@@ -105,7 +123,7 @@ Para cada lead com conversa encontrada:
 O pipeline extrai campos personalizados (user_fields) do subscriber:
 
 | Campo | O que representa |
-|-------|------------------|
+|:------|:-----------------|
 | Tem clinica / dono ou gestor | Tipo de clinica (medica, odonto, estetica, multi) |
 | Recebeu processos | Se ja foi processado (defesa vs prevencao) |
 | Quantas clinicas / CNPJ | Escala do negocio (2-4, 5-10, +1 CNPJ) |
@@ -118,7 +136,8 @@ O pipeline extrai campos personalizados (user_fields) do subscriber:
 - **Log**: `pipeline_log.txt` com timestamp, contadores e erros
 - **Console**: progresso em tempo real
 
-Exemplo de log:
+### Exemplo de log
+
 ```
 === execucao 19/06/2026 13:00:15 ===
 Baixando subscribers...

@@ -1,4 +1,20 @@
+---
+title: Estrutura de Arquivos
+layout: default
+nav_order: 4
+description: "Mapa completo de pastas e arquivos do projeto MFA"
+---
+
 # Estrutura de Arquivos
+{: .no_toc }
+
+## Indice
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Arvore do Projeto
 
@@ -71,16 +87,23 @@ Analise de Mensagens/
     +-- _auditoria_canal_duplo/         # Auditoria de leads em multiplos canais
 ```
 
-## Arquivos Sensíveis (NAO versionar)
+## Arquivos Sensiveis
+
+{: .warning }
+> Estes arquivos contem credenciais ou dados pessoais e **nunca devem ser versionados**.
 
 | Arquivo | Conteudo | Protecao |
-|---------|----------|----------|
-| `.env` | `MINHA_API_KEY`, `MINHA_API_KEY2`, `ANTHROPIC_API_KEY` | Adicionar ao `.gitignore` |
-| `gcred.json` | Credenciais da conta de servico Google | Adicionar ao `.gitignore` |
+|:--------|:---------|:---------|
+| `.env` | `MINHA_API_KEY`, `MINHA_API_KEY2`, `ANTHROPIC_API_KEY` | `.gitignore` |
+| `gcred.json` | Credenciais da conta de servico Google | `.gitignore` |
+| `clientes/*.md` | Dados pessoais de leads (telefone, conversa) | `.gitignore` |
+| `_memoria/indice_clientes.md` | Nomes reais de clientes | `.gitignore` |
 
 ## Convencoes de Nomeacao
 
-- **Arquivos de clientes**: `nome-em-minusculas-com-hifens.md` (ex: `anderson-cortes.md`)
-- **Resumos**: `Resumo - Nome do Cliente.md` (nome de exibicao, com maiusculas)
-- **Dados da API**: `p001.json`, `p002.json` (paginados); `<user_ns>.json` (por lead)
-- **Blocos TSV**: `paste_<aba>.tsv` (ex: `paste_CAMPANHA_META.tsv`)
+| Tipo | Padrao | Exemplo |
+|:-----|:-------|:--------|
+| Arquivo de cliente | `nome-em-minusculas-com-hifens.md` | `anderson-cortes.md` |
+| Resumo temporal | `Resumo - Nome do Cliente.md` | `Resumo - Anderson Cortes.md` |
+| Dados da API | `p001.json` (paginado) ou `<user_ns>.json` | `f175863u12345.json` |
+| Blocos TSV | `paste_<aba>.tsv` | `paste_CAMPANHA_META.tsv` |

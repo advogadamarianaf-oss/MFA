@@ -1,6 +1,23 @@
+---
+title: Integracoes
+layout: default
+nav_order: 9
+description: "APIs e ferramentas integradas — Atende Direito, Google Sheets, Claude in Chrome e MCP"
+---
+
 # Integracoes
+{: .no_toc }
 
 O sistema se conecta com 3 plataformas externas e usa 1 extensao de navegador.
+{: .fs-6 .fw-300 }
+
+## Indice
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## 1. Atende Direito (API REST)
 
@@ -11,7 +28,7 @@ O sistema se conecta com 3 plataformas externas e usa 1 extensao de navegador.
 ### Endpoints Usados
 
 | Endpoint | Metodo | Uso no projeto |
-|----------|--------|----------------|
+|:---------|:-------|:---------------|
 | `/subscribers` | GET | Listar todos os leads (paginado, 100/pag) |
 | `/subscriber/chat-messages` | GET | Baixar conversa completa de um lead |
 | `/subscriber` | PUT | Atualizar tags, campos, board |
@@ -36,7 +53,7 @@ nas system messages indica mudanca de estagio. O ultimo evento determina o CRM a
 ### Canais (Flows)
 
 | Flow ID | Canal |
-|---------|-------|
+|:--------|:------|
 | `f175863` | Comercial - API OFICIAL |
 | `f270363` | Comercial 2 - API OFICIAL |
 | `f229905` | SAC |
@@ -55,7 +72,7 @@ O `user_ns` de cada subscriber comeca com o flow ID (ex: `f175863u12345`).
 ### Abas e Colunas
 
 | Aba | Chave de casamento | Colunas RESUMO | Inicio |
-|-----|--------------------|----------------|--------|
+|:----|:-------------------|:---------------|:-------|
 | CAMPANHA META | TELEFONE (col C) | M, N, O, P | M2 |
 | CAMPANHA GOOGLE | ATENDE DIREITO ID | G, H, I, J | G2 |
 | ORGANICO | ATENDE DIREITO ID | G, H, I, J | G2 |
@@ -85,7 +102,7 @@ no Atende Direito, ler conversas, preencher a planilha.
 ### Ferramentas usadas
 
 | Ferramenta | Uso |
-|------------|-----|
+|:-----------|:----|
 | `tabs_context_mcp` | Listar abas existentes no grupo MCP |
 | `tabs_create_mcp` | Criar aba nova (1 por lead em paralelo) |
 | `navigate` | Ir para URL do Atende Direito ou Google Sheets |
@@ -125,7 +142,7 @@ endpoints da API como ferramentas nativas do Claude Code.
 ### Ferramentas disponiveis
 
 | Ferramenta | Descricao |
-|------------|-----------|
+|:-----------|:----------|
 | `mcp__atende-direito__list_endpoints` | Lista todos os endpoints disponiveis |
 | `mcp__atende-direito__get_endpoint_schema` | Retorna o schema de um endpoint |
 | `mcp__atende-direito__execute_request` | Executa uma requisicao na API |

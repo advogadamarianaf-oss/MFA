@@ -1,9 +1,28 @@
+---
+title: Guia Rapido
+layout: default
+nav_order: 10
+description: "Setup inicial, operacoes do dia a dia, troubleshooting e glossario"
+---
+
 # Guia Rapido
+{: .no_toc }
+
+Tudo que voce precisa para comecar a usar o sistema MFA.
+{: .fs-6 .fw-300 }
+
+## Indice
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Pre-requisitos
 
 | Item | Descricao |
-|------|-----------|
+|:-----|:----------|
 | Python 3.12+ | Para rodar os scripts de automacao |
 | Claude Code | CLI do Claude com extensao Claude in Chrome |
 | Atende Direito | Conta com acesso a API (token) |
@@ -119,11 +138,11 @@ Analise de Mensagens/
 ## Troubleshooting
 
 | Problema | Solucao |
-|----------|---------|
+|:---------|:--------|
 | "MINHA_API_KEY ausente" | Verificar `.env` na raiz do projeto |
 | "gcred.json nao encontrado" | Baixar credenciais da conta de servico Google |
 | "Faltam libs" | `pip install google-auth google-api-python-client` |
-| Lead nao localizado na busca | Tentar variações do nome (so primeiro nome, sobrenome) |
+| Lead nao localizado na busca | Tentar variacoes do nome (so primeiro nome, sobrenome) |
 | "WhatsApp Error 131049" | Numero possivelmente invalido; alerta na planilha |
 | Planilha sem permissao | Compartilhar com o email da conta de servico como Editor |
 | Claude in Chrome nao conecta | Verificar se a extensao esta ativa e o Atende Direito logado |
@@ -132,7 +151,7 @@ Analise de Mensagens/
 ## Glossario
 
 | Termo | Significado |
-|-------|-------------|
+|:------|:------------|
 | **CRM** | Estagio macro do lead no funil (1 de 12) |
 | **Sequencia** | Posicao detalhada dentro do CRM |
 | **user_ns** | Identificador unico do subscriber no Atende Direito |

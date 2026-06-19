@@ -1,4 +1,20 @@
+---
+title: Fluxo de Trabalho
+layout: default
+nav_order: 6
+description: "Como analisar leads passo a passo — individual, em paralelo e em lote"
+---
+
 # Fluxo de Trabalho
+{: .no_toc }
+
+## Indice
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
 
 ## Fluxo Principal — Analise de Lead
 
@@ -72,17 +88,21 @@
 
 O mesmo lead pode aparecer em ate 3 canais (Comercial, Comercial 2, SAC).
 
-**Regras de consolidacao:**
+{: .important }
+> Sempre conferir por telefone se ha mais de um resultado ao buscar um lead.
+
+### Regras de consolidacao
 
 | Regra | Descricao |
-|-------|-----------|
+|:------|:----------|
 | Um cliente = um arquivo | Nunca criar 2 arquivos para a mesma pessoa |
 | Linha do tempo unica | Ordenada por data/hora, marcando canal de cada trecho |
 | CRM mais avancado | De qualquer canal |
 | Registrar todos os user_ns | Para rastreabilidade |
 | Conferir por telefone | Ao buscar, verificar se ha mais de 1 resultado |
 
-**Ao buscar um lead:**
+### Ao buscar um lead
+
 1. Digitar o nome no campo "Procurar"
 2. Se aparecer mais de 1 resultado (mesmo telefone, canais diferentes) → abrir TODOS
 3. Consolidar as conversas em ordem cronologica
@@ -93,7 +113,7 @@ O mesmo lead pode aparecer em ate 3 canais (Comercial, Comercial 2, SAC).
 ```markdown
 # {Nome do Cliente}
 
-> Atende Direito · Ultima analise: AAAA-MM-DD · Status no chat: Aberto/Finalizado
+> Atende Direito · Ultima analise: AAAA-MM-DD · Status: Aberto/Finalizado
 > URL/NS: {link ou NS do Usuario}
 
 ## Status
@@ -114,28 +134,25 @@ O mesmo lead pode aparecer em ate 3 canais (Comercial, Comercial 2, SAC).
 ## Proximo passo
 {acao concreta recomendada ao escritorio}
 
-## Observacoes / alertas
-- {perfil, objecoes, falhas de entrega, no-show, notas internas}
-
 ## Historico de etapas
 | Data | CRM | Sequencia | Observacao |
 |------|-----|-----------|------------|
 
 ## Conversa (registro)
-### Respostas do formulario
-### Linha do tempo
-### Observacao tecnica
 ```
 
 ## Resumo Temporal
 
 Para cada cliente ja analisado, e possivel gerar um resumo por janelas de tempo:
 
-- **t0** = data da primeira mensagem da conversa
-- **Primeiras 24h** — t0 ate t0+1 dia
-- **Primeiros 7 dias** — t0 ate t0+7 dias
-- **Primeiros 15 dias** — t0 ate t0+15 dias
-- **Primeiros 30 dias** — t0 ate t0+30 dias
+| Janela | Periodo |
+|:-------|:--------|
+| **Primeiras 24h** | t0 ate t0 + 1 dia |
+| **Primeiros 7 dias** | t0 ate t0 + 7 dias |
+| **Primeiros 15 dias** | t0 ate t0 + 15 dias |
+| **Primeiros 30 dias** | t0 ate t0 + 30 dias |
+
+Onde **t0** = data da primeira mensagem da conversa.
 
 Cada janela e **acumulada** (inclui o que veio antes, destacando o que e novo).
 Arquivo gerado em `Resumos/Resumo - <Nome do Cliente>.md`.
