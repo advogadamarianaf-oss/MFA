@@ -25,8 +25,10 @@
       --accent-light: rgba(96,165,250,0.1);
       --nav-bg: #0f1117;
       --nav-border: #1e2130;
+      --sidebar-w: 280px;
       --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
       --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
       --radius: 8px;
       --max-w: 860px;
       --nav-h: 56px;
@@ -57,44 +59,153 @@
     .nav-inner {
       max-width: 1200px; margin: 0 auto;
       padding: 0 24px; height: 100%;
-      display: flex; align-items: center; gap: 32px;
+      display: flex; align-items: center; gap: 16px;
     }
+    .nav-hamburger {
+      background: none; border: none; cursor: pointer;
+      padding: 8px; color: var(--text-secondary);
+      border-radius: 6px; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-hamburger:hover { color: var(--text); background: var(--bg-secondary); }
     .nav-logo {
       font-weight: 700; font-size: 16px;
       color: var(--text); text-decoration: none;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.02em; flex-shrink: 0;
     }
     .nav-logo span { color: var(--accent); }
-    .nav-links { display: flex; gap: 4px; flex: 1; overflow-x: auto; }
-    .nav-links::-webkit-scrollbar { display: none; }
-    .nav-links a {
-      color: var(--text-secondary); text-decoration: none;
-      font-size: 13.5px; font-weight: 500;
-      padding: 6px 12px; border-radius: 6px;
-      white-space: nowrap; transition: all 0.15s;
+
+    /* ── SEARCH ── */
+    .search-wrap {
+      flex: 1; max-width: 400px; position: relative;
     }
-    .nav-links a:hover { color: var(--text); background: var(--bg-secondary); }
-    .nav-links a.active { color: var(--accent); background: var(--accent-light); }
+    .search-input {
+      width: 100%; height: 36px;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0 12px 0 36px;
+      color: var(--text); font-family: var(--font);
+      font-size: 13.5px; outline: none; transition: all 0.2s;
+    }
+    .search-input::placeholder { color: var(--text-tertiary); }
+    .search-input:focus { border-color: var(--accent); background: var(--bg); box-shadow: 0 0 0 3px rgba(96,165,250,0.15); }
+    .search-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--text-tertiary); pointer-events: none;
+    }
+    .search-kbd {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      font-size: 11px; color: var(--text-tertiary); background: var(--bg);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 1px 6px; font-family: var(--font); pointer-events: none;
+    }
+    .search-results {
+      position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-lg);
+      display: none; overflow: hidden; z-index: 200;
+    }
+    .search-results.open { display: block; }
+    .search-results a {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 10px 14px; text-decoration: none;
+      border-bottom: 1px solid var(--border-light); transition: background 0.1s;
+    }
+    .search-results a:last-child { border-bottom: none; }
+    .search-results a:hover, .search-results a.focused { background: var(--accent-light); }
+    .search-results .sr-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .search-results .sr-desc { font-size: 12px; color: var(--text-secondary); }
+    .search-empty {
+      padding: 16px 14px; text-align: center;
+      color: var(--text-tertiary); font-size: 13px;
+    }
+
     .nav-gh {
       color: var(--text-secondary); text-decoration: none;
       font-size: 13px; font-weight: 500;
       display: flex; align-items: center; gap: 6px;
       padding: 6px 12px; border-radius: 6px;
       border: 1px solid var(--border); transition: all 0.15s;
-      white-space: nowrap;
+      white-space: nowrap; flex-shrink: 0;
     }
     .nav-gh:hover { color: var(--text); border-color: var(--text-tertiary); }
     .nav-gh svg { width: 16px; height: 16px; }
-
-    /* ── MOBILE NAV ── */
-    .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: var(--text); }
-    @media (max-width: 768px) {
-      .nav-links { display: none; flex-direction: column; position: absolute; top: var(--nav-h); left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 8px 16px; gap: 0; box-shadow: var(--shadow-md); }
-      .nav-links.open { display: flex; }
-      .nav-links a { padding: 10px 12px; }
-      .nav-toggle { display: block; }
-      .nav-gh { display: none; }
+    @media (max-width: 640px) {
+      .nav-gh span { display: none; }
+      .nav-gh { padding: 6px 8px; }
+      .search-kbd { display: none; }
     }
+
+    /* ── SIDEBAR ── */
+    .sidebar-overlay {
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(0,0,0,0.5); opacity: 0;
+      pointer-events: none; transition: opacity 0.25s;
+    }
+    .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w); z-index: 200;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      transform: translateX(-100%);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex; flex-direction: column;
+      box-shadow: var(--shadow-lg);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      height: var(--nav-h);
+    }
+    .sidebar-header .nav-logo { font-size: 15px; }
+    .sidebar-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-tertiary); padding: 6px;
+      border-radius: 6px; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sidebar-close:hover { color: var(--text); background: var(--bg); }
+
+    .sidebar-nav {
+      flex: 1; overflow-y: auto; padding: 12px 12px;
+    }
+    .sidebar-nav::-webkit-scrollbar { width: 4px; }
+    .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      padding: 10px 12px; border-radius: 8px;
+      transition: all 0.15s; margin-bottom: 2px;
+    }
+    .sidebar-nav a:hover { color: var(--text); background: var(--bg); }
+    .sidebar-nav a.active {
+      color: var(--accent); background: var(--accent-light);
+      font-weight: 600;
+    }
+    .sidebar-nav a .nav-num {
+      font-size: 11px; color: var(--text-tertiary);
+      min-width: 20px; font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .sidebar-nav a.active .nav-num { color: var(--accent); }
+
+    .sidebar-footer {
+      padding: 16px 20px; border-top: 1px solid var(--border);
+    }
+    .sidebar-footer a {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text-tertiary); text-decoration: none;
+      font-size: 13px; font-weight: 500; transition: color 0.15s;
+    }
+    .sidebar-footer a:hover { color: var(--text); }
+    .sidebar-footer svg { width: 16px; height: 16px; }
 
     /* ── MAIN ── */
     .content {
@@ -220,21 +331,52 @@
 </head>
 <body>
 
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="{{ '/' | relative_url }}" class="nav-logo"><span>MFA</span> Docs</a>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Fechar menu">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l10 10M14 4L4 14"/></svg>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      {% assign pages = site.pages | where_exp: "p", "p.nav_order" | sort: "nav_order" %}
+      {% for p in pages %}
+      <a href="{{ p.url | relative_url }}" {% if page.url == p.url %}class="active"{% endif %}>
+        <span class="nav-num">{{ p.nav_order | prepend: '00' | slice: -2, 2 }}</span>
+        {{ p.nav_title | default: p.title }}
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="sidebar-footer">
+      <a href="https://github.com/advogadamarianaf-oss/MFA" target="_blank">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Ver no GitHub
+      </a>
+    </div>
+  </aside>
+
+  <!-- Top Nav -->
   <nav class="nav">
     <div class="nav-inner">
-      <a href="{{ '/' | relative_url }}" class="nav-logo"><span>MFA</span> Docs</a>
-      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h14M3 10h14M3 14h14"/></svg>
+      <button class="nav-hamburger" id="sidebarOpen" aria-label="Abrir menu">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h14M3 10h14M3 15h14"/></svg>
       </button>
-      <div class="nav-links">
-        {% assign pages = site.pages | where_exp: "p", "p.nav_order" | sort: "nav_order" %}
-        {% for p in pages %}
-        <a href="{{ p.url | relative_url }}" {% if page.url == p.url %}class="active"{% endif %}>{{ p.nav_title | default: p.title }}</a>
-        {% endfor %}
+      <a href="{{ '/' | relative_url }}" class="nav-logo"><span>MFA</span> Docs</a>
+
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar paginas..." autocomplete="off">
+        <span class="search-kbd">/</span>
+        <div class="search-results" id="searchResults"></div>
       </div>
+
       <a href="https://github.com/advogadamarianaf-oss/MFA" target="_blank" class="nav-gh">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        GitHub
+        <span>GitHub</span>
       </a>
     </div>
   </nav>
@@ -270,8 +412,71 @@
   </button>
 
   <script>
+    // Sidebar
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); document.body.style.overflow = ''; }
+    document.getElementById('sidebarOpen').addEventListener('click', openSidebar);
+    document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSidebar(); });
+
+    // Back to top
     const bt = document.querySelector('.back-top');
-    window.addEventListener('scroll', () => bt.classList.toggle('visible', window.scrollY > 400));
+    window.addEventListener('scroll', function() { bt.classList.toggle('visible', window.scrollY > 400); });
+
+    // Search
+    var searchIndex = [
+      {% assign pages = site.pages | where_exp: "p", "p.nav_order" | sort: "nav_order" %}
+      {% for p in pages %}
+      { title: {{ p.title | jsonify }}, nav: {{ p.nav_title | default: p.title | jsonify }}, desc: {{ p.description | default: "" | jsonify }}, url: {{ p.url | relative_url | jsonify }}, order: {{ p.nav_order }} }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ];
+
+    var searchInput = document.getElementById('searchInput');
+    var searchResults = document.getElementById('searchResults');
+    var focusIdx = -1;
+
+    searchInput.addEventListener('input', function() {
+      var q = this.value.trim().toLowerCase();
+      if (!q) { searchResults.classList.remove('open'); return; }
+      var matches = searchIndex.filter(function(p) {
+        return p.title.toLowerCase().indexOf(q) !== -1 ||
+               p.nav.toLowerCase().indexOf(q) !== -1 ||
+               p.desc.toLowerCase().indexOf(q) !== -1;
+      });
+      focusIdx = -1;
+      if (matches.length === 0) {
+        searchResults.innerHTML = '<div class="search-empty">Nenhum resultado para "' + q.replace(/</g,'&lt;') + '"</div>';
+      } else {
+        searchResults.innerHTML = matches.map(function(m) {
+          return '<a href="' + m.url + '"><span class="sr-title">' + m.title + '</span><span class="sr-desc">' + m.desc + '</span></a>';
+        }).join('');
+      }
+      searchResults.classList.add('open');
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+      var items = searchResults.querySelectorAll('a');
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); focusIdx = Math.min(focusIdx + 1, items.length - 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); focusIdx = Math.max(focusIdx - 1, 0); }
+      else if (e.key === 'Enter' && focusIdx >= 0) { e.preventDefault(); items[focusIdx].click(); return; }
+      else return;
+      items.forEach(function(a, i) { a.classList.toggle('focused', i === focusIdx); });
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.search-wrap')) searchResults.classList.remove('open');
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    });
   </script>
 </body>
 </html>
