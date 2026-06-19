@@ -7,6 +7,10 @@ description: "Sobre o escritorio Mariana Friedrich Advocacia e o sistema MFA"
 
 # Sobre
 
+<div style="text-align:center; margin-bottom:40px;">
+  <img src="{{ '/assets/logo-full.png' | relative_url }}" alt="Mariana Friedrich Advocacia" style="max-width:360px; width:100%; filter: brightness(0) invert(1);">
+</div>
+
 ## O Escritorio
 
 A **Mariana Friedrich Advocacia** e um escritorio especializado em **Direito Medico e Odontologico**, com atuacao em todo o Brasil. Fundado pela Dra. Mariana Friedrich, o escritorio se dedica a defesa juridica de profissionais da saude — dentistas e medicos — em processos eticos, civeis e criminais.
