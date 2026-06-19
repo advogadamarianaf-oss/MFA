@@ -2,80 +2,61 @@
 title: Guia Rapido
 layout: default
 nav_order: 10
-description: "Setup inicial, operacoes do dia a dia, troubleshooting e glossario"
+description: "Setup inicial, operacoes do dia a dia e troubleshooting"
 ---
 
 # Guia Rapido
-{: .no_toc }
-
-Tudo que voce precisa para comecar a usar o sistema MFA.
-{: .fs-6 .fw-300 }
-
-## Indice
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
-
----
 
 ## Pre-requisitos
 
 | Item | Descricao |
 |:-----|:----------|
-| Python 3.12+ | Para rodar os scripts de automacao |
-| Claude Code | CLI do Claude com extensao Claude in Chrome |
-| Atende Direito | Conta com acesso a API (token) |
-| Google Cloud | Conta de servico com acesso a Sheets API |
-| Navegador | Chrome com extensao Claude in Chrome instalada |
+| Python 3.12+ | Scripts de automacao |
+| Claude Code | CLI com extensao Claude in Chrome |
+| Atende Direito | Conta com acesso a API |
+| Google Cloud | Conta de servico (Sheets API) |
+| Chrome | Extensao Claude in Chrome |
 
-## Setup Inicial
+## Setup
 
-### 1. Configurar credenciais
-
-Criar arquivo `.env` na raiz do projeto:
+### 1. Credenciais
 
 ```env
+# .env na raiz do projeto
 MINHA_API_KEY=sua_chave_api_atende_direito
-MINHA_API_KEY2=chave_secundaria_opcional
 ANTHROPIC_API_KEY=sua_chave_anthropic
 ```
 
-Baixar credenciais da conta de servico Google e salvar como `gcred.json`.
+Baixar credenciais Google → salvar como `gcred.json`.
 
-### 2. Instalar dependencias Python
+### 2. Dependencias
 
 ```bash
 pip install google-auth google-api-python-client
 ```
 
-### 3. Configurar Claude in Chrome
+### 3. Claude in Chrome
 
-1. Instalar a extensao Claude in Chrome no navegador
-2. Logar no Atende Direito no navegador
-3. Logar no Google Sheets no mesmo navegador
-4. Conectar a extensao ao Claude Code
+1. Instalar a extensao no Chrome
+2. Logar no Atende Direito e Google Sheets
+3. Conectar a extensao ao Claude Code
 
-### 4. Agendar o pipeline diario
+### 4. Pipeline diario
 
 ```batch
 AGENDAR todos os dias 13h.bat
 ```
 
-Ou manualmente via Agendador de Tarefas do Windows (schtasks, 13:00).
-
 ## Operacoes do Dia a Dia
 
-### Analisar leads especificos
+### Analisar leads
 
 ```
 > analisa o lead Anderson Cortes
 > analisa Maria, Joao e Ana
 ```
 
-Usa a skill `/analisar-lead`. Precisa do Claude in Chrome conectado.
-
-### Rodar o pipeline diario agora
+### Pipeline diario
 
 ```
 > roda o pipeline
@@ -83,80 +64,54 @@ Usa a skill `/analisar-lead`. Precisa do Claude in Chrome conectado.
 
 Ou clique duplo em `RODAR - Pipeline diario (tudo).bat`.
 
-### Processar a planilha em lotes
+### Processar planilha
 
 ```
 > processa a planilha
 > continua o proximo lote
 ```
 
-Usa a skill `/processar-planilha`. Processa 5 leads por vez.
-
-### Gerar resumos temporais
+### Resumos temporais
 
 ```
 > faz o resumo temporal de todos os clientes
 > gera resumo 24h/7/15/30 do Anderson
 ```
 
-Usa a skill `/resumo-temporal`. Nao precisa de navegador.
-
-### Consultar um cliente
+### Consultar cliente
 
 ```
 > como esta o lead Anderson Cortes?
 ```
 
-O Claude le `clientes/anderson-cortes.md` e `indice_clientes.md`.
-
-### Reclassificar CRM de leads
+### Reclassificar CRM
 
 ```
 > reclassifica o CRM do Anderson para Aguardando Fechamento
-```
-
-Atualiza o arquivo do cliente e o indice.
-
-## Estrutura Minima para Funcionar
-
-```
-Analise de Mensagens/
-+-- .env                    # Chaves de API
-+-- gcred.json              # Credenciais Google
-+-- CLAUDE.md               # Instrucoes do projeto
-+-- _memoria/
-|   +-- crm_definicoes.md   # Os 12 CRMs (obrigatorio)
-|   +-- indice_clientes.md  # Indice de clientes
-+-- _templates/
-|   +-- prompt_agente_analise.md
-+-- clientes/
-|   +-- _MODELO_CLIENTE.md  # Template (obrigatorio)
-+-- Resumos/                # Pasta para resumos temporais
-+-- pipeline_diario.py      # Pipeline automatico
 ```
 
 ## Troubleshooting
 
 | Problema | Solucao |
 |:---------|:--------|
-| "MINHA_API_KEY ausente" | Verificar `.env` na raiz do projeto |
-| "gcred.json nao encontrado" | Baixar credenciais da conta de servico Google |
+| "MINHA_API_KEY ausente" | Verificar `.env` na raiz |
+| "gcred.json nao encontrado" | Baixar credenciais Google |
 | "Faltam libs" | `pip install google-auth google-api-python-client` |
-| Lead nao localizado na busca | Tentar variacoes do nome (so primeiro nome, sobrenome) |
-| "WhatsApp Error 131049" | Numero possivelmente invalido; alerta na planilha |
-| Planilha sem permissao | Compartilhar com o email da conta de servico como Editor |
-| Claude in Chrome nao conecta | Verificar se a extensao esta ativa e o Atende Direito logado |
-| Pipeline nao roda as 13h | Verificar tarefa no Agendador de Tarefas do Windows |
+| Lead nao localizado | Tentar variacoes do nome |
+| "WhatsApp Error 131049" | Numero invalido; alerta na planilha |
+| Planilha sem permissao | Compartilhar com email da conta de servico |
+| Chrome nao conecta | Verificar extensao + Atende Direito logado |
+| Pipeline nao roda 13h | Checar Agendador de Tarefas do Windows |
 
 ## Glossario
 
 | Termo | Significado |
 |:------|:------------|
-| **CRM** | Estagio macro do lead no funil (1 de 12) |
+| **CRM** | Estagio do lead no funil (1 de 12) |
 | **Sequencia** | Posicao detalhada dentro do CRM |
-| **user_ns** | Identificador unico do subscriber no Atende Direito |
-| **Board** | Quadro/coluna no Atende Direito (= CRM) |
-| **Flow** | Fluxo/bot do Atende Direito (Comercial, Comercial 2, SAC) |
-| **t0** | Data da primeira mensagem da conversa |
-| **Janela temporal** | Periodo acumulado a partir de t0 (24h, 7d, 15d, 30d) |
-| **Lead Ads** | Lead vindo de anuncio no Meta (Facebook/Instagram) |
+| **user_ns** | ID unico do subscriber no Atende Direito |
+| **Board** | Quadro no Atende Direito (= CRM) |
+| **Flow** | Fluxo/bot (Comercial, Comercial 2, SAC) |
+| **t0** | Data da primeira mensagem |
+| **Janela temporal** | Periodo acumulado a partir de t0 |
+| **Lead Ads** | Lead de anuncio Meta (Facebook/Instagram) |

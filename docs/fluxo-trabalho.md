@@ -2,41 +2,28 @@
 title: Fluxo de Trabalho
 layout: default
 nav_order: 6
+nav_title: Fluxo
 description: "Como analisar leads passo a passo — individual, em paralelo e em lote"
 ---
 
 # Fluxo de Trabalho
-{: .no_toc }
 
-## Indice
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
-
----
-
-## Fluxo Principal — Analise de Lead
+## Fluxo Principal
 
 ```
 1. Identificar lead(s) a analisar
          |
-2. Buscar conversa no Atende Direito
-   (navegador ou API)
+2. Buscar conversa no Atende Direito (navegador ou API)
          |
-3. Ler conversa completa
-   (formulario + linha do tempo)
+3. Ler conversa completa (formulario + linha do tempo)
          |
 4. Classificar CRM (1 dos 12) + sequencia
-   (fonte: _memoria/crm_definicoes.md)
          |
 5. Criar/atualizar clientes/<nome>.md
-   (modelo: _MODELO_CLIENTE.md)
          |
 6. Atualizar _memoria/indice_clientes.md
          |
 7. [Opcional] Gerar resumo temporal
-   (Resumos/Resumo - <Nome>.md)
 ```
 
 ## Analise Individual (1 lead)
@@ -69,17 +56,14 @@ description: "Como analisar leads passo a passo — individual, em paralelo e em
 2. Selecionar proximos 5 nomes nao processados
          |
 3. Agente leitor (sequencial, 1 navegador):
-   busca cada nome no Atende Direito,
-   extrai conversa completa
+   busca cada nome, extrai conversa completa
          |
 4. 5 agentes escritores (paralelo, so arquivos):
    cria clientes/<nome>.md + Resumos/<Nome>.md
-   retorna linha do indice + 4 textos de resumo
          |
 5. Orquestrador consolida indice
          |
-6. Orquestrador preenche planilha via navegador:
-   Caixa de Nome -> M<linha> -> digita 24h Tab 7d Tab 15d Tab 30d Enter
+6. Orquestrador preenche planilha via navegador
          |
 7. Apresenta tabela-resumo, oferece proximo lote
 ```
@@ -88,7 +72,6 @@ description: "Como analisar leads passo a passo — individual, em paralelo e em
 
 O mesmo lead pode aparecer em ate 3 canais (Comercial, Comercial 2, SAC).
 
-{: .important }
 > Sempre conferir por telefone se ha mais de um resultado ao buscar um lead.
 
 ### Regras de consolidacao
@@ -99,47 +82,7 @@ O mesmo lead pode aparecer em ate 3 canais (Comercial, Comercial 2, SAC).
 | Linha do tempo unica | Ordenada por data/hora, marcando canal de cada trecho |
 | CRM mais avancado | De qualquer canal |
 | Registrar todos os user_ns | Para rastreabilidade |
-| Conferir por telefone | Ao buscar, verificar se ha mais de 1 resultado |
-
-### Ao buscar um lead
-
-1. Digitar o nome no campo "Procurar"
-2. Se aparecer mais de 1 resultado (mesmo telefone, canais diferentes) → abrir TODOS
-3. Consolidar as conversas em ordem cronologica
-4. Marcar cada trecho com `[Comercial]`, `[Comercial 2]` ou `[SAC]`
-
-## Template do Arquivo de Cliente
-
-```markdown
-# {Nome do Cliente}
-
-> Atende Direito · Ultima analise: AAAA-MM-DD · Status: Aberto/Finalizado
-> URL/NS: {link ou NS do Usuario}
-
-## Status
-- **CRM atual:** {um dos 12 CRMs}
-- **Sequencia:** {onde o lead parou no fluxo}
-
-## Identificacao
-- **Telefone/WhatsApp:** {numero}
-- **E-mail:** {e-mail}
-- **Cidade:** {cidade}
-- **Origem:** {lead_ads, inbound_webhook, organico...}
-- **Conversa iniciada em:** {data}
-- **Tipo de demanda:** {defesa / preventivo / odonto / medica...}
-
-## Resumo
-{2 a 5 frases sobre o que o lead procura, contexto e tom.}
-
-## Proximo passo
-{acao concreta recomendada ao escritorio}
-
-## Historico de etapas
-| Data | CRM | Sequencia | Observacao |
-|------|-----|-----------|------------|
-
-## Conversa (registro)
-```
+| Conferir por telefone | Verificar se ha mais de 1 resultado |
 
 ## Resumo Temporal
 
@@ -152,7 +95,4 @@ Para cada cliente ja analisado, e possivel gerar um resumo por janelas de tempo:
 | **Primeiros 15 dias** | t0 ate t0 + 15 dias |
 | **Primeiros 30 dias** | t0 ate t0 + 30 dias |
 
-Onde **t0** = data da primeira mensagem da conversa.
-
-Cada janela e **acumulada** (inclui o que veio antes, destacando o que e novo).
-Arquivo gerado em `Resumos/Resumo - <Nome do Cliente>.md`.
+Onde **t0** = data da primeira mensagem da conversa. Cada janela e **acumulada**.

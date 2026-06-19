@@ -6,15 +6,6 @@ description: "Diagrama de componentes, fluxo de dados e modos de operacao do MFA
 ---
 
 # Arquitetura
-{: .no_toc }
-
-## Indice
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
-
----
 
 ## Diagrama de Componentes
 

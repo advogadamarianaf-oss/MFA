@@ -1,22 +1,20 @@
 ---
-title: Inicio
+title: MFA — Analise de Mensagens
 layout: default
 nav_order: 1
-description: "Documentacao tecnica completa do sistema MFA — Analise de Mensagens para Advocacia Medica & Odontologica"
+nav_title: Inicio
+description: "Documentacao tecnica do sistema MFA — Analise de Mensagens"
 permalink: /
 ---
 
-# MFA — Analise de Mensagens
-{: .fs-9 }
-
-Documentacao tecnica do sistema de analise, classificacao e acompanhamento de leads
-para o escritorio de **Advocacia Medica & Odontologica** (Mariana Friedrich).
-{: .fs-6 .fw-300 }
-
-[Guia Rapido]({% link guia-rapido.md %}){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[Ver no GitHub](https://github.com/advogadamarianaf-oss/MFA){: .btn .fs-5 .mb-4 .mb-md-0 }
-
----
+<div class="hero">
+  <h1>MFA — Analise de Mensagens</h1>
+  <p>Documentacao tecnica do sistema de analise, classificacao e acompanhamento de leads para o escritorio de <strong>Advocacia Medica & Odontologica</strong> (Mariana Friedrich).</p>
+  <div class="hero-buttons">
+    <a href="{{ '/guia-rapido' | relative_url }}" class="btn btn-primary">Guia Rapido</a>
+    <a href="https://github.com/advogadamarianaf-oss/MFA" target="_blank" class="btn btn-secondary">Ver no GitHub</a>
+  </div>
+</div>
 
 ## O que e o MFA?
 
@@ -63,16 +61,16 @@ acompanhado e reportado. Fazer isso manualmente para 100+ leads e inviavel.
 
 ---
 
-## Indice da documentacao
+## Paginas
 
 | Pagina | Descricao |
 |:-------|:----------|
-| [Visao Geral]({% link visao-geral.md %}) | Problema, solucao, resultados e publico |
-| [Arquitetura]({% link arquitetura.md %}) | Diagrama de componentes e fluxo de dados |
-| [Estrutura de Arquivos]({% link estrutura-arquivos.md %}) | Mapa completo de pastas e arquivos |
-| [CRM — Os 12 Estagios]({% link crm-definicoes.md %}) | Definicao de cada CRM e regras de classificacao |
-| [Fluxo de Trabalho]({% link fluxo-trabalho.md %}) | Como analisar leads passo a passo |
-| [Skills e Comandos]({% link skills.md %}) | Referencia das 4 skills do Claude Code |
-| [Pipeline Diario]({% link pipeline-diario.md %}) | Automacao: API + resumos + planilha |
-| [Integracoes]({% link integracoes.md %}) | Atende Direito, Google Sheets, Chrome |
-| [Guia Rapido]({% link guia-rapido.md %}) | Setup inicial e primeiros passos |
+| [Visao Geral]({{ '/visao-geral' | relative_url }}) | Problema, solucao, resultados e publico |
+| [Arquitetura]({{ '/arquitetura' | relative_url }}) | Diagrama de componentes e fluxo de dados |
+| [Estrutura de Arquivos]({{ '/estrutura-arquivos' | relative_url }}) | Mapa completo de pastas e arquivos |
+| [CRM — Os 12 Estagios]({{ '/crm-definicoes' | relative_url }}) | Definicao de cada CRM e regras |
+| [Fluxo de Trabalho]({{ '/fluxo-trabalho' | relative_url }}) | Como analisar leads passo a passo |
+| [Skills e Comandos]({{ '/skills' | relative_url }}) | Referencia das 4 skills do Claude Code |
+| [Pipeline Diario]({{ '/pipeline-diario' | relative_url }}) | Automacao: API + resumos + planilha |
+| [Integracoes]({{ '/integracoes' | relative_url }}) | Atende Direito, Google Sheets, Chrome |
+| [Guia Rapido]({{ '/guia-rapido' | relative_url }}) | Setup inicial e primeiros passos |

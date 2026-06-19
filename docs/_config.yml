@@ -1,37 +1,7 @@
-title: MFA — Analise de Mensagens
-description: Documentacao tecnica do sistema de analise de leads para Advocacia Medica & Odontologica
-remote_theme: just-the-docs/just-the-docs@v0.10.0
-
+title: MFA
+description: Documentacao tecnica — Analise de Mensagens
 url: https://advogadamarianaf-oss.github.io
 baseurl: /MFA
-
-color_scheme: mfa
-
-aux_links:
-  "GitHub":
-    - "https://github.com/advogadamarianaf-oss/MFA"
-
-aux_links_new_tab: true
-
-nav_sort: case_insensitive
-
-heading_anchors: true
-
-back_to_top: true
-back_to_top_text: "Voltar ao topo"
-
-footer_content: "&copy; 2025-2026 Mariana Friedrich Advocacia &mdash; Projeto MFA"
-
-search:
-  heading_level: 2
-  previews: 3
-  preview_words_before: 5
-  preview_words_after: 10
-
-ga_tracking:
-
-exclude:
-  - CHANGELOG.md
-  - LICENSE
-  - Gemfile
-  - Gemfile.lock
+markdown: kramdown
+kramdown:
+  input: GFM

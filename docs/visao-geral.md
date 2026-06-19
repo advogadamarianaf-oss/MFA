@@ -2,19 +2,10 @@
 title: Visao Geral
 layout: default
 nav_order: 2
-description: "O que e o projeto MFA, o problema resolvido e os resultados alcancados"
+description: "O que e o projeto MFA, o problema resolvido e os resultados"
 ---
 
 # Visao Geral
-{: .no_toc }
-
-## Indice
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
-
----
 
 ## O Problema
 

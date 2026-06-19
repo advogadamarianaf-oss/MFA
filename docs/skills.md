@@ -2,21 +2,13 @@
 title: Skills e Comandos
 layout: default
 nav_order: 7
-description: "Referencia das 4 skills customizadas do Claude Code usadas no projeto"
+nav_title: Skills
+description: "Referencia das 4 skills customizadas do Claude Code"
 ---
 
 # Skills e Comandos
-{: .no_toc }
 
-O projeto utiliza 4 skills customizadas do Claude Code. Cada skill e um comando
-que pode ser invocado para executar uma operacao especifica.
-{: .fs-6 .fw-300 }
-
-## Indice
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
+O projeto utiliza 4 skills customizadas do Claude Code.
 
 ---
 
@@ -25,25 +17,14 @@ que pode ser invocado para executar uma operacao especifica.
 **O que faz:** Analisa a conversa de um ou mais leads no Atende Direito e gera
 resumo + classificacao CRM + sequencia.
 
-**Quando usar:** "analisa o lead Fulano", "processa Maria, Joao e Ana",
-"classifica esses clientes"
+**Quando usar:** "analisa o lead Fulano", "analisa Maria, Joao e Ana"
 
-### Pre-requisitos
-
-- Claude in Chrome conectado
-- Atende Direito logado no navegador
-
-### Comportamento
+**Requer:** Claude in Chrome conectado, Atende Direito logado.
 
 | Cenario | Execucao |
 |:--------|:---------|
 | 1 lead | Executa direto, sequencial |
 | 2+ leads | Agentes em paralelo (1 por lead, max 4-5) |
-
-- Cada agente busca por nome, le a conversa inteira, classifica CRM
-- Cria/atualiza `clientes/<nome>.md`
-- Agentes NAO editam o indice (evita conflito)
-- Orquestrador consolida o indice ao final
 
 **Saida:** Arquivo do cliente + tabela-resumo (Lead, CRM, Sequencia, Proximo passo)
 
@@ -54,91 +35,53 @@ resumo + classificacao CRM + sequencia.
 **O que faz:** Gera resumo por janelas de tempo (24h, 7d, 15d, 30d) a partir
 dos arquivos em `clientes/`.
 
-**Quando usar:** "faz o resumo temporal do Anderson", "gera resumos de 24h/7/15/30 dias"
+**Quando usar:** "faz o resumo temporal do Anderson"
 
-### Pre-requisitos
+**Requer:** Arquivo do cliente ja existente. **Nao precisa de navegador.**
 
-- Arquivo do cliente ja existente em `clientes/<nome>.md`
-- **NAO precisa de navegador** (trabalha so com arquivos locais)
-
-### Comportamento
-
-- Le o arquivo do cliente, identifica t0 (primeira mensagem)
-- Classifica cada evento nas 4 janelas acumuladas
-- Gera mini resumo de 2-5 linhas por janela
-- Salva em `Resumos/Resumo - <Nome do Cliente>.md`
-- Para varios clientes, dispara agentes em paralelo
-
-**Saida:** Arquivo de resumo com 4 secoes (24h, 7d, 15d, 30d)
+**Saida:** Arquivo `Resumos/Resumo - <Nome>.md` com 4 secoes.
 
 ---
 
 ## 3. /processar-planilha
 
-**O que faz:** Processa os leads da planilha RELATORIOS COMERCIAIS NOVA (aba
-CAMPANHA META) em lotes de 5, na ordem dos nomes.
+**O que faz:** Processa leads da planilha RELATORIOS COMERCIAIS NOVA (aba CAMPANHA META)
+em lotes de 5.
 
-**Quando usar:** "processa a planilha", "roda o proximo lote", "preenche os resumos"
+**Quando usar:** "processa a planilha", "roda o proximo lote"
 
-### Pre-requisitos
-
-- Claude in Chrome conectado
-- Atende Direito + Google Sheets logados no navegador
-- Planilha compartilhada com permissao de edicao
-
-### Fluxo por lote
+**Requer:** Claude in Chrome conectado, Atende Direito + Google Sheets logados.
 
 | Etapa | Quem | O que faz |
 |:------|:-----|:----------|
-| 1. Selecionar lote | Orquestrador | Proximos 5 nomes nao processados |
-| 2. Ler conversas | 1 agente (sequencial) | Busca no Atende Direito, extrai texto |
-| 3. Escrever arquivos | 5 agentes (paralelo) | Cria cliente.md + Resumo.md |
-| 4. Consolidar indice | Orquestrador | Atualiza indice_clientes.md |
-| 5. Preencher planilha | Orquestrador (navegador) | Escreve M:P via Caixa de Nome |
-
-### Mapa da planilha (CAMPANHA META)
-
-| Coluna | Conteudo |
-|:-------|:---------|
-| B | NOME (ordem de processamento) |
-| C | TELEFONE (confirmacao) |
-| M | RESUMO APOS 24H |
-| N | RESUMO APOS 7 DIAS |
-| O | RESUMO APOS 15 DIAS |
-| P | RESUMO APOS 30 DIAS |
+| 1 | Orquestrador | Seleciona proximos 5 nomes |
+| 2 | 1 agente (sequencial) | Busca no Atende Direito, extrai texto |
+| 3 | 5 agentes (paralelo) | Cria cliente.md + Resumo.md |
+| 4 | Orquestrador | Atualiza indice + preenche planilha M:P |
 
 ---
 
 ## 4. /processar-planilha-api
 
-**O que faz:** Atualiza os resumos de TODAS as abas usando API do Atende Direito
-+ Google Sheets API. Tem dois modos.
+**O que faz:** Atualiza resumos de TODAS as abas via API. Dois modos:
 
-**Quando usar:** "atualiza a planilha", "roda o pipeline", "tem leads novos"
+### Modo Automatico
 
-### Modo Automatico (data-driven)
-
-{: .note }
 > Roda 100% na maquina, sem Claude. Agendado todos os dias as 13h.
 
-- Script: `pipeline_diario.py`
-- Le planilha via Sheets API → baixa subscribers/conversas da API → gera resumos → escreve
+Script: `pipeline_diario.py`. Le planilha → baixa subscribers/conversas → gera resumos → escreve.
 
-### Modo Analise Profunda (com Claude)
+### Modo Analise Profunda
 
-- Sob demanda, para leads especificos
-- Agentes leem transcripts e escrevem resumos nuancados
-- Qualidade superior (detecta objecoes, tom, contexto)
+Sob demanda, com Claude. Agentes leem transcripts e escrevem resumos nuancados
+(detecta objecoes, tom, contexto).
 
-### Abas tratadas e colunas
+### Abas e colunas
 
 | Aba | Casamento | Colunas RESUMO |
 |:----|:----------|:---------------|
 | CAMPANHA META | Telefone | M:P |
-| CAMPANHA GOOGLE | Atende Direito ID (user_ns) | G:J |
-| ORGANICO | Atende Direito ID | G:J |
-| MANYCHAT | Atende Direito ID | F:I |
+| CAMPANHA GOOGLE | user_ns | G:J |
+| ORGANICO | user_ns | G:J |
+| MANYCHAT | user_ns | F:I |
 | REUNIOES & FECHAMENTOS | Telefone | V:Y |
-
-{: .note }
-> CAPTACAO ATIVA e PIXEL META ficam de fora (sem conversa / sem colunas de resumo).
