@@ -15,140 +15,241 @@
   --purple:#b197fc;
 }
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.header{background:linear-gradient(135deg,#1a1d27 0%,#222b45 100%);padding:20px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.header h1{font-size:1.4rem;font-weight:700;letter-spacing:.5px}
-.header h1 span{color:var(--accent);font-weight:400}
-.header-meta{display:flex;align-items:center;gap:16px;font-size:.82rem;color:var(--text2)}
-.header-meta .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
+
+/* Navbar */
+.navbar{background:linear-gradient(135deg,#1a1d27 0%,#222b45 100%);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;position:sticky;top:0;z-index:100}
+.navbar-left{display:flex;align-items:center;gap:16px}
+.navbar-title{font-size:1.1rem;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.navbar-title span{color:var(--accent);font-weight:400}
+.navbar-tabs{display:flex;gap:4px;margin-left:32px}
+.tab-btn{background:transparent;border:1px solid transparent;color:var(--text2);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:600;transition:.2s;letter-spacing:.3px}
+.tab-btn:hover{color:var(--text);background:rgba(79,140,255,.08)}
+.tab-btn.active{background:rgba(79,140,255,.15);color:var(--accent);border-color:rgba(79,140,255,.3)}
+.navbar-right{display:flex;align-items:center;gap:12px}
+.navbar-status{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.refresh-btn{background:var(--card2);border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:.2s}
+.hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.5rem;cursor:pointer;padding:4px 8px;line-height:1}
+
+/* Sidebar mobile */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200}
+.sidebar-overlay.open{display:block}
+.sidebar{position:fixed;top:0;left:-280px;width:280px;height:100vh;background:var(--card);border-right:1px solid var(--border);z-index:201;transition:left .3s ease;padding:20px;display:flex;flex-direction:column;gap:8px}
+.sidebar.open{left:0}
+.sidebar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.sidebar-header h2{font-size:1rem;font-weight:700}
+.sidebar-close{background:none;border:none;color:var(--text2);font-size:1.4rem;cursor:pointer}
+.sidebar-tab{background:transparent;border:1px solid transparent;color:var(--text2);padding:12px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;text-align:left;transition:.2s;width:100%}
+.sidebar-tab:hover{color:var(--text);background:rgba(79,140,255,.08)}
+.sidebar-tab.active{background:rgba(79,140,255,.15);color:var(--accent);border-color:rgba(79,140,255,.3)}
+
+/* Container */
+.container{max-width:1440px;margin:0 auto;padding:20px 24px}
+
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.filter-bar label{font-size:.78rem;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+.filter-input{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:.82rem;font-family:inherit}
+.filter-input:focus{outline:none;border-color:var(--accent)}
+.filter-btn{background:var(--accent);border:none;color:#fff;padding:7px 18px;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;transition:.2s}
+.filter-btn:hover{opacity:.85}
+.refresh-btn{background:var(--card2);border:1px solid var(--border);color:var(--text2);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:.2s;font-family:inherit}
 .refresh-btn:hover{border-color:var(--accent);color:var(--accent)}
-.container{max-width:1400px;margin:0 auto;padding:20px}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:.2s}
+
+/* KPI cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;transition:.2s}
 .kpi:hover{border-color:var(--accent);transform:translateY(-2px)}
-.kpi-label{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--text2);margin-bottom:6px}
-.kpi-value{font-size:1.7rem;font-weight:700;line-height:1.2}
-.kpi-sub{font-size:.75rem;color:var(--text2);margin-top:4px}
-.kpi-icon{position:absolute;top:14px;right:14px;font-size:1.4rem;opacity:.3}
+.kpi-label{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:5px}
+.kpi-value{font-size:1.55rem;font-weight:700;line-height:1.2}
+.kpi-sub{font-size:.72rem;color:var(--text2);margin-top:3px}
 .kpi.blue .kpi-value{color:var(--accent)}
 .kpi.green .kpi-value{color:var(--green)}
 .kpi.yellow .kpi-value{color:var(--yellow)}
 .kpi.red .kpi-value{color:var(--red)}
 .kpi.purple .kpi-value{color:var(--purple)}
 .kpi.orange .kpi-value{color:var(--orange)}
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+
+/* Tab content */
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* Charts */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 .chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
 .chart-card.full{grid-column:1/-1}
-.chart-card h3{font-size:.9rem;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.chart-card h3 .badge{background:var(--accent);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:10px;font-weight:500}
+.chart-card h3{font-size:.88rem;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.chart-card h3 .badge{background:var(--accent);color:#fff;font-size:.62rem;padding:2px 8px;border-radius:10px;font-weight:500}
 .chart-wrap{position:relative;height:300px}
-.chart-wrap.small{height:220px}
-.funnel{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0}
+.chart-wrap.small{height:240px}
+
+/* Funnel */
+.funnel{display:flex;flex-direction:column;gap:8px;padding:10px 0}
 .funnel-step{display:flex;align-items:center;gap:12px;width:100%}
 .funnel-bar{height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem;color:#fff;transition:.3s;min-width:60px}
-.funnel-info{font-size:.78rem;color:var(--text2);white-space:nowrap}
-.funnel-info strong{color:var(--text);font-size:.9rem}
+.funnel-info{font-size:.76rem;color:var(--text2);white-space:nowrap}
+.funnel-info strong{color:var(--text);font-size:.88rem}
+
+/* Tables */
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:.82rem}
-th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);color:var(--text2);font-weight:600;text-transform:uppercase;font-size:.7rem;letter-spacing:.8px}
-td{padding:10px 12px;border-bottom:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);color:var(--text2);font-weight:600;text-transform:uppercase;font-size:.68rem;letter-spacing:.7px}
+td{padding:9px 12px;border-bottom:1px solid var(--border)}
 tr:hover td{background:rgba(79,140,255,.04)}
-.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:600}
 .tag-meta{background:rgba(108,92,231,.15);color:var(--accent2)}
 .tag-google{background:rgba(0,214,143,.12);color:var(--green)}
 .tag-org{background:rgba(255,194,72,.12);color:var(--yellow)}
 .tag-capt{background:rgba(255,146,43,.12);color:var(--orange)}
-.loading{display:flex;align-items:center;justify-content:center;height:200px;color:var(--text2);font-size:.9rem}
-.loading::after{content:'';width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-left:10px}
+.tag-total{background:rgba(79,140,255,.12);color:var(--accent)}
+.roi-pos{color:var(--green);font-weight:700}
+.roi-neg{color:var(--red);font-weight:700}
+
+/* Loading / Error */
+.loading{display:flex;align-items:center;justify-content:center;height:200px;color:var(--text2);font-size:.88rem}
+.loading::after{content:'';width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-left:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.error-msg{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:var(--red);padding:16px;border-radius:8px;font-size:.85rem;margin:20px 0}
-.footer{text-align:center;padding:30px;color:var(--text2);font-size:.75rem;border-top:1px solid var(--border);margin-top:20px}
-@media(max-width:900px){
+.error-msg{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:var(--red);padding:14px;border-radius:8px;font-size:.82rem;margin-bottom:16px}
+
+/* Footer */
+.footer{text-align:center;padding:28px;color:var(--text2);font-size:.73rem;border-top:1px solid var(--border);margin-top:20px}
+
+/* Responsive */
+@media(max-width:768px){
   .charts-grid{grid-template-columns:1fr}
   .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
-  .header{padding:16px}
+  .navbar-tabs{display:none}
+  .hamburger{display:block}
   .container{padding:14px}
+  .navbar{padding:0 14px}
+  .filter-bar{flex-direction:column;align-items:stretch}
 }
 @media(max-width:500px){
-  .kpi-value{font-size:1.3rem}
-  .kpi{padding:14px}
+  .kpi-value{font-size:1.2rem}
+  .kpi{padding:12px 14px}
+  .navbar-title{font-size:.9rem}
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>DASHBOARD COMERCIAL <span>— Mariana Friedrich Advocacia</span></h1>
-  <div class="header-meta">
-    <span id="recorte"></span>
-    <span><span class="dot"></span> Atualizado: <span id="lastUpdate">carregando...</span></span>
-    <button class="refresh-btn" onclick="loadAll()">&#x21bb; Atualizar</button>
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="navbar-left">
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
+    <div class="navbar-title">DASHBOARD COMERCIAL <span>— Mariana Friedrich Advocacia</span></div>
+    <div class="navbar-tabs">
+      <button class="tab-btn active" data-tab="diario" onclick="switchTab('diario')">Diario</button>
+      <button class="tab-btn" data-tab="semanal" onclick="switchTab('semanal')">Semanal</button>
+      <button class="tab-btn" data-tab="mensal" onclick="switchTab('mensal')">Mensal</button>
+    </div>
   </div>
+  <div class="navbar-right">
+    <div class="navbar-status">
+      <span class="dot"></span>
+      <span id="lastUpdate">carregando...</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Sidebar mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Menu</h2>
+    <button class="sidebar-close" onclick="closeSidebar()">&times;</button>
+  </div>
+  <button class="sidebar-tab active" data-tab="diario" onclick="switchTab('diario');closeSidebar()">Diario</button>
+  <button class="sidebar-tab" data-tab="semanal" onclick="switchTab('semanal');closeSidebar()">Semanal</button>
+  <button class="sidebar-tab" data-tab="mensal" onclick="switchTab('mensal');closeSidebar()">Mensal</button>
 </div>
 
 <div class="container">
   <div id="error-container"></div>
 
-  <!-- KPIs -->
-  <div class="kpi-grid" id="kpis">
-    <div class="kpi blue"><div class="kpi-label">Total de Leads</div><div class="kpi-value" id="k-leads">--</div><div class="kpi-sub" id="k-leads-sub"></div><div class="kpi-icon">👥</div></div>
-    <div class="kpi purple"><div class="kpi-label">Reunioes Agendadas</div><div class="kpi-value" id="k-reunioes">--</div><div class="kpi-sub" id="k-reunioes-sub"></div><div class="kpi-icon">📅</div></div>
-    <div class="kpi green"><div class="kpi-label">Clientes Fechados</div><div class="kpi-value" id="k-fechados">--</div><div class="kpi-sub" id="k-fechados-sub"></div><div class="kpi-icon">🤝</div></div>
-    <div class="kpi yellow"><div class="kpi-label">Receita Fechada</div><div class="kpi-value" id="k-receita">--</div><div class="kpi-sub" id="k-receita-sub"></div><div class="kpi-icon">💰</div></div>
-    <div class="kpi orange"><div class="kpi-label">CPL Medio</div><div class="kpi-value" id="k-cpl">--</div><div class="kpi-sub" id="k-cpl-sub"></div><div class="kpi-icon">📊</div></div>
-    <div class="kpi red"><div class="kpi-label">CAC</div><div class="kpi-value" id="k-cac">--</div><div class="kpi-sub" id="k-cac-sub"></div><div class="kpi-icon">🎯</div></div>
-    <div class="kpi blue"><div class="kpi-label">Investimento Total</div><div class="kpi-value" id="k-invest">--</div><div class="kpi-sub" id="k-invest-sub"></div><div class="kpi-icon">💵</div></div>
-    <div class="kpi green"><div class="kpi-label">ROI a Vista</div><div class="kpi-value" id="k-roi">--</div><div class="kpi-sub" id="k-roi-sub"></div><div class="kpi-icon">📈</div></div>
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <label>Periodo:</label>
+    <input type="date" class="filter-input" id="filterStart">
+    <span style="color:var(--text2);font-size:.82rem">ate</span>
+    <input type="date" class="filter-input" id="filterEnd">
+    <button class="filter-btn" onclick="applyFilters()">Filtrar</button>
+    <button class="refresh-btn" onclick="clearFilters()">Limpar filtros</button>
+    <div style="flex:1"></div>
+    <button class="refresh-btn" onclick="reloadAll()">&#x21bb; Atualizar dados</button>
   </div>
 
-  <div class="charts-grid">
-    <!-- Evolucao diaria -->
-    <div class="chart-card full">
-      <h3>Evolucao Diaria Acumulada <span class="badge">HISTORICO</span></h3>
-      <div class="chart-wrap"><canvas id="chartHistorico"></canvas></div>
-    </div>
+  <!-- KPI cards -->
+  <div class="kpi-grid" id="kpis">
+    <div class="kpi blue"><div class="kpi-label">Total de Leads</div><div class="kpi-value" id="k-leads">--</div><div class="kpi-sub" id="k-leads-sub"></div></div>
+    <div class="kpi purple"><div class="kpi-label">Reunioes Agendadas</div><div class="kpi-value" id="k-reunioes">--</div><div class="kpi-sub" id="k-reunioes-sub"></div></div>
+    <div class="kpi green"><div class="kpi-label">Clientes Fechados</div><div class="kpi-value" id="k-fechados">--</div><div class="kpi-sub" id="k-fechados-sub"></div></div>
+    <div class="kpi yellow"><div class="kpi-label">Receita Fechada</div><div class="kpi-value" id="k-receita">--</div><div class="kpi-sub" id="k-receita-sub"></div></div>
+    <div class="kpi orange"><div class="kpi-label">CPL Medio</div><div class="kpi-value" id="k-cpl">--</div><div class="kpi-sub" id="k-cpl-sub"></div></div>
+    <div class="kpi red"><div class="kpi-label">CAC</div><div class="kpi-value" id="k-cac">--</div><div class="kpi-sub" id="k-cac-sub"></div></div>
+    <div class="kpi blue"><div class="kpi-label">Investimento Total</div><div class="kpi-value" id="k-invest">--</div><div class="kpi-sub" id="k-invest-sub"></div></div>
+    <div class="kpi green"><div class="kpi-label">ROI a Vista</div><div class="kpi-value" id="k-roi">--</div><div class="kpi-sub" id="k-roi-sub"></div></div>
+  </div>
 
-    <!-- Funil -->
-    <div class="chart-card">
-      <h3>Funil Comercial</h3>
-      <div class="funnel" id="funnel"></div>
+  <!-- Tab: Diario -->
+  <div class="tab-content active" id="tab-diario">
+    <div class="charts-grid">
+      <div class="chart-card full">
+        <h3>Evolucao Diaria Acumulada <span class="badge">HISTORICO</span></h3>
+        <div class="chart-wrap"><canvas id="chartHistorico"></canvas></div>
+      </div>
+      <div class="chart-card full">
+        <h3>Leads por Dia <span class="badge">META + ORGANICO</span></h3>
+        <div class="chart-wrap"><canvas id="chartLeadsDia"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Funil Comercial</h3>
+        <div class="funnel" id="funnel"></div>
+      </div>
+      <div class="chart-card">
+        <h3>Leads por Canal</h3>
+        <div class="chart-wrap small"><canvas id="chartCanal"></canvas></div>
+      </div>
     </div>
+  </div>
 
-    <!-- Leads por fonte -->
-    <div class="chart-card">
-      <h3>Leads por Canal</h3>
-      <div class="chart-wrap small"><canvas id="chartCanal"></canvas></div>
+  <!-- Tab: Semanal -->
+  <div class="tab-content" id="tab-semanal">
+    <div class="charts-grid">
+      <div class="chart-card full">
+        <h3>Investimento Semanal por Canal <span class="badge">INVEST_SEM</span></h3>
+        <div class="chart-wrap"><canvas id="chartInvestSem"></canvas></div>
+      </div>
+      <div class="chart-card full">
+        <h3>Leads por Semana</h3>
+        <div class="chart-wrap"><canvas id="chartLeadsSemana"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>CAC / ROI por Canal</h3>
+        <div class="chart-wrap small"><canvas id="chartCacRoiBar"></canvas></div>
+      </div>
+      <div class="chart-card full">
+        <h3>CAC / ROI Detalhado por Canal</h3>
+        <div class="table-wrap" id="tabelaCac"></div>
+      </div>
     </div>
+  </div>
 
-    <!-- Leads por dia -->
-    <div class="chart-card full">
-      <h3>Leads por Dia <span class="badge">META + ORGANICO</span></h3>
-      <div class="chart-wrap"><canvas id="chartLeadsDia"></canvas></div>
-    </div>
-
-    <!-- CAC/ROI por canal -->
-    <div class="chart-card">
-      <h3>CAC / ROI por Canal</h3>
-      <div class="chart-wrap small"><canvas id="chartCacRoi"></canvas></div>
-    </div>
-
-    <!-- Investimento semanal -->
-    <div class="chart-card">
-      <h3>Investimento Semanal</h3>
-      <div class="chart-wrap small"><canvas id="chartInvest"></canvas></div>
-    </div>
-
-    <!-- Visao mensal -->
-    <div class="chart-card full">
-      <h3>Visao Mensal</h3>
-      <div class="table-wrap" id="tabelaMensal"></div>
-    </div>
-
-    <!-- CAC/ROI tabela -->
-    <div class="chart-card full">
-      <h3>CAC / ROI Detalhado por Canal</h3>
-      <div class="table-wrap" id="tabelaCac"></div>
+  <!-- Tab: Mensal -->
+  <div class="tab-content" id="tab-mensal">
+    <div class="charts-grid">
+      <div class="chart-card full">
+        <h3>Visao Mensal</h3>
+        <div class="table-wrap" id="tabelaMensal"></div>
+      </div>
+      <div class="chart-card full">
+        <h3>Receita vs Investimento por Mes</h3>
+        <div class="chart-wrap"><canvas id="chartReceitaInvest"></canvas></div>
+      </div>
+      <div class="chart-card full">
+        <h3>ROI Mensal</h3>
+        <div class="chart-wrap"><canvas id="chartRoiMensal"></canvas></div>
+      </div>
     </div>
   </div>
 </div>
@@ -158,34 +259,68 @@ tr:hover td{background:rgba(79,140,255,.04)}
 </div>
 
 <script>
-const SHEET1 = '1BodcfEOso5pooeOSnA2Gq-OJVQtVcjleIEAfjvwM5IM';
-const SHEET2 = '1gTDv5OGhkV7yI28lKBX_DD0gMXgZYuEEE-eUe8rzvow';
+(function(){
+"use strict";
 
-const chartInstances = {};
+/* ── Constants ── */
+var SHEET1 = '1BodcfEOso5pooeOSnA2Gq-OJVQtVcjleIEAfjvwM5IM';
+var SHEET2 = '1gTDv5OGhkV7yI28lKBX_DD0gMXgZYuEEE-eUe8rzvow';
 
-function fmt(n) { return new Intl.NumberFormat('pt-BR').format(n); }
-function fmtR(n) { return 'R$ ' + new Intl.NumberFormat('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n); }
-function fmtPct(n) { return (n * 100).toFixed(1) + '%'; }
+/* ── Data cache ── */
+var DATA = {
+  historico: null,
+  cacRoi: null,
+  mensal: null,
+  investSem: null,
+  leadRows: null // combined leads from all tabs
+};
 
+/* ── Chart instance map ── */
+var charts = {};
+
+/* ── Formatting helpers ── */
+function fmt(n) {
+  if (n == null || isNaN(n)) return '0';
+  return new Intl.NumberFormat('pt-BR').format(n);
+}
+function fmtR(n) {
+  if (n == null || isNaN(n)) return 'R$ 0,00';
+  return 'R$ ' + new Intl.NumberFormat('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n);
+}
+function fmtPct(n) {
+  if (n == null || isNaN(n)) return '0,0%';
+  return (n * 100).toFixed(1).replace('.', ',') + '%';
+}
+function fmtPctRaw(n) {
+  if (n == null || isNaN(n)) return '0,0%';
+  return Number(n).toFixed(1).replace('.', ',') + '%';
+}
+
+/* ── Fetch helpers ── */
 async function fetchSheet(id, sheet) {
-  const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}`;
-  const resp = await fetch(url);
-  const text = await resp.text();
-  const json = JSON.parse(text.match(/setResponse\(([\s\S]*)\)/)?.[1]);
-  const cols = json.table.cols.map(c => c.label || '');
-  const rows = json.table.rows.map(r => (r.c || []).map(c => c ? (c.v ?? c.f ?? '') : ''));
-  return { cols, rows };
+  var url = 'https://docs.google.com/spreadsheets/d/' + id + '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(sheet);
+  var resp = await fetch(url);
+  var text = await resp.text();
+  var match = text.match(/setResponse\(([\s\S]*)\)/);
+  if (!match) throw new Error('Formato inesperado da planilha: ' + sheet);
+  var json = JSON.parse(match[1]);
+  var cols = json.table.cols.map(function(c){ return c.label || ''; });
+  var rows = json.table.rows.map(function(r){
+    return (r.c || []).map(function(c){ return c ? (c.v != null ? c.v : (c.f != null ? c.f : '')) : ''; });
+  });
+  return { cols: cols, rows: rows };
 }
 
 async function fetchCSV(id, sheet) {
-  const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheet)}`;
-  const resp = await fetch(url);
+  var url = 'https://docs.google.com/spreadsheets/d/' + id + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(sheet);
+  var resp = await fetch(url);
   return await resp.text();
 }
 
 function parseCSVRow(row) {
-  const cols = []; let cur = '', inQ = false;
-  for (const c of row) {
+  var cols = [], cur = '', inQ = false;
+  for (var i = 0; i < row.length; i++) {
+    var c = row[i];
     if (c === '"') inQ = !inQ;
     else if (c === ',' && !inQ) { cols.push(cur); cur = ''; }
     else cur += c;
@@ -194,357 +329,850 @@ function parseCSVRow(row) {
   return cols;
 }
 
+/* ── Chart management ── */
 function destroyChart(key) {
-  if (chartInstances[key]) { chartInstances[key].destroy(); delete chartInstances[key]; }
+  if (charts[key]) { charts[key].destroy(); delete charts[key]; }
 }
 
+/* ── Date parse helpers ── */
+// Parse DD/MM/YYYY or DD/MM/YYYY HH:MM
+function parseDDMMYYYY(s) {
+  if (!s) return null;
+  s = String(s).trim();
+  var parts = s.split(/[\s]+/);
+  var dp = parts[0].split('/');
+  if (dp.length < 3) return null;
+  var d = parseInt(dp[0], 10);
+  var m = parseInt(dp[1], 10) - 1;
+  var y = parseInt(dp[2], 10);
+  if (isNaN(d) || isNaN(m) || isNaN(y)) return null;
+  return new Date(y, m, d);
+}
+
+// gviz dates may come as "Date(YYYY,M,D)" objects or as strings
+function parseGvizDate(v) {
+  if (!v) return null;
+  if (typeof v === 'string') {
+    var dm = v.match(/Date\((\d+),(\d+),(\d+)/);
+    if (dm) return new Date(parseInt(dm[1],10), parseInt(dm[2],10), parseInt(dm[3],10));
+    return parseDDMMYYYY(v);
+  }
+  if (v instanceof Date) return v;
+  return null;
+}
+
+function formatDateShort(d) {
+  if (!d) return '';
+  var dd = String(d.getDate()).padStart(2, '0');
+  var mm = String(d.getMonth() + 1).padStart(2, '0');
+  return dd + '/' + mm;
+}
+
+function formatDateFull(d) {
+  if (!d) return '';
+  var dd = String(d.getDate()).padStart(2, '0');
+  var mm = String(d.getMonth() + 1).padStart(2, '0');
+  var yy = d.getFullYear();
+  return dd + '/' + mm + '/' + yy;
+}
+
+// ISO week number
+function getISOWeek(d) {
+  var dt = new Date(d.getTime());
+  dt.setHours(0,0,0,0);
+  dt.setDate(dt.getDate() + 3 - (dt.getDay() + 6) % 7);
+  var week1 = new Date(dt.getFullYear(), 0, 4);
+  return 1 + Math.round(((dt - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+function getISOWeekKey(d) {
+  var dt = new Date(d.getTime());
+  dt.setHours(0,0,0,0);
+  dt.setDate(dt.getDate() + 3 - (dt.getDay() + 6) % 7);
+  var yr = dt.getFullYear();
+  var wk = getISOWeek(d);
+  return yr + '-W' + String(wk).padStart(2, '0');
+}
+
+/* Parse "R$ 1.234,56" or number */
+function parseMoneyValue(v) {
+  if (typeof v === 'number') return v;
+  if (v == null) return 0;
+  var s = String(v).trim();
+  if (s === '') return 0;
+  // Remove "R$" and spaces
+  s = s.replace(/R\$/g, '').replace(/\s/g, '');
+  // Brazilian format: 1.234,56 -> 1234.56
+  s = s.replace(/\./g, '').replace(',', '.');
+  var n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
+function toNum(v) {
+  if (typeof v === 'number') return v;
+  if (v == null) return 0;
+  var n = parseFloat(String(v).replace(/\./g, '').replace(',', '.'));
+  return isNaN(n) ? 0 : n;
+}
+
+/* ── Date filter state ── */
+var filterStart = null;
+var filterEnd = null;
+
+function applyFilters() {
+  var s = document.getElementById('filterStart').value;
+  var e = document.getElementById('filterEnd').value;
+  filterStart = s ? new Date(s + 'T00:00:00') : null;
+  filterEnd = e ? new Date(e + 'T23:59:59') : null;
+  renderAll();
+}
+window.applyFilters = applyFilters;
+
+function clearFilters() {
+  document.getElementById('filterStart').value = '';
+  document.getElementById('filterEnd').value = '';
+  filterStart = null;
+  filterEnd = null;
+  renderAll();
+}
+window.clearFilters = clearFilters;
+
+function isInRange(d) {
+  if (!d) return true;
+  if (filterStart && d < filterStart) return false;
+  if (filterEnd && d > filterEnd) return false;
+  return true;
+}
+
+/* ── Sidebar / Tab switching ── */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+window.toggleSidebar = toggleSidebar;
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+window.closeSidebar = closeSidebar;
+
+function switchTab(tab) {
+  // Update navbar tab buttons
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+  });
+  // Update sidebar tab buttons
+  document.querySelectorAll('.sidebar-tab').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+  });
+  // Show/hide tab content
+  document.querySelectorAll('.tab-content').forEach(function(el){
+    el.classList.toggle('active', el.id === 'tab-' + tab);
+  });
+}
+window.switchTab = switchTab;
+
+/* ── Error display ── */
 function showError(msg) {
-  document.getElementById('error-container').innerHTML = `<div class="error-msg">⚠️ ${msg}<br><small>Verifique se as planilhas estao compartilhadas com "Qualquer pessoa com o link pode ver".</small></div>`;
+  document.getElementById('error-container').innerHTML = '<div class="error-msg">' + msg + '<br><small>Verifique se as planilhas estao compartilhadas com "Qualquer pessoa com o link pode ver".</small></div>';
 }
 
-async function loadAll() {
+/* ── Chart.js defaults ── */
+Chart.defaults.color = '#9ca3b5';
+Chart.defaults.borderColor = '#2a2e3d';
+Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
+
+/* ── Load all data ── */
+async function loadAllData() {
   document.getElementById('lastUpdate').textContent = 'carregando...';
   document.getElementById('error-container').innerHTML = '';
 
   try {
-    await Promise.all([
-      loadKPIs(),
-      loadHistorico(),
-      loadLeadsPorDia(),
-      loadCacRoi(),
-      loadMensal(),
-      loadInvestSemanal()
+    var results = await Promise.all([
+      fetchSheet(SHEET2, 'HISTÓRICO'),
+      fetchSheet(SHEET2, 'CAC_ROI'),
+      fetchSheet(SHEET2, 'MENSAL'),
+      fetchSheet(SHEET2, 'INVEST_SEM'),
+      fetchCSV(SHEET1, 'CAMPANHA META'),
+      fetchCSV(SHEET1, 'ORGÂNICO'),
+      fetchCSV(SHEET1, 'CAMPANHA GOOGLE'),
+      fetchCSV(SHEET1, 'MANYCHAT'),
+      fetchCSV(SHEET1, 'CAPTAÇÃO ATIVA')
     ]);
-  } catch (e) {
+
+    DATA.historico = results[0];
+    DATA.cacRoi = results[1];
+    DATA.mensal = results[2];
+    DATA.investSem = results[3];
+
+    // Parse leads from all CSV tabs
+    var allLeadDates = [];
+    for (var t = 4; t < results.length; t++) {
+      var csv = results[t];
+      var lines = csv.split('\n');
+      if (lines.length < 2) continue;
+      var header = parseCSVRow(lines[0]);
+      // Find "DATA DE ENTRADA" column index
+      var dateIdx = -1;
+      for (var h = 0; h < header.length; h++) {
+        if (header[h].toUpperCase().indexOf('DATA') >= 0 && header[h].toUpperCase().indexOf('ENTRADA') >= 0) {
+          dateIdx = h;
+          break;
+        }
+      }
+      if (dateIdx < 0) dateIdx = 3; // fallback to column D
+
+      for (var i = 1; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line) continue;
+        var cols = parseCSVRow(line);
+        var dateStr = (cols[dateIdx] || '').trim();
+        if (!dateStr) continue;
+        var dt = parseDDMMYYYY(dateStr);
+        if (dt) allLeadDates.push(dt);
+      }
+    }
+    DATA.leadRows = allLeadDates;
+
+    renderAll();
+  } catch(e) {
     console.error(e);
     showError('Erro ao carregar dados: ' + e.message);
   }
 
-  const now = new Date();
+  var now = new Date();
   document.getElementById('lastUpdate').textContent = now.toLocaleString('pt-BR');
 }
 
-async function loadKPIs() {
-  // Use HISTÓRICO (last row = latest snapshot) and CAC_ROI (TOTAL row) for reliable data
-  const [hist, cac] = await Promise.all([
-    fetchSheet(SHEET2, 'HISTÓRICO'),
-    fetchSheet(SHEET2, 'CAC_ROI')
-  ]);
+/* ── Render all sections ── */
+function renderAll() {
+  if (!DATA.historico) return;
+  renderKPIs();
+  renderHistorico();
+  renderLeadsPorDia();
+  renderFunnel();
+  renderLeadsPorCanal();
+  renderInvestSemanal();
+  renderLeadsPorSemana();
+  renderCacRoiBar();
+  renderCacRoiTable();
+  renderMensalTable();
+  renderReceitaInvest();
+  renderRoiMensal();
+}
 
-  // HISTÓRICO columns: DATA, LEADS, REUNIÕES, COMPARECERAM, FECHARAM, RECEITA À VISTA, INVEST. MÍDIA, INVEST. TOTAL
-  const lastRow = hist.rows[hist.rows.length - 1] || [];
-  const leads = lastRow[1] || 0;
-  const reunioes = lastRow[2] || 0;
-  const compareceram = lastRow[3] || 0;
-  const fechados = lastRow[4] || 0;
-  const receita = lastRow[5] || 0;
-  const investMidia = lastRow[6] || 0;
-  const investTotal = lastRow[7] || 0;
+/* ── KPIs ── */
+function renderKPIs() {
+  var hist = DATA.historico;
+  var cac = DATA.cacRoi;
 
-  // Compute today's leads (diff from previous day)
-  const prevRow = hist.rows.length > 1 ? hist.rows[hist.rows.length - 2] : [];
-  const leadsHoje = leads - (prevRow[1] || 0);
+  // If filtered, find last row within range; otherwise use last row
+  var lastRow = null;
+  var prevRow = null;
+  var firstDate = '';
 
-  // CAC_ROI columns: CANAL, INVESTIMENTO, LEADS, CPL, REUNIÕES, CUSTO/REUNIÃO, FECHAM., CUSTO/CLIENTE, RECEITA, ROI VISTA, RECEITA ANUAL, ROI ANO
-  let cpl = 0, cacVal = 0, roiVista = 0, roiAnual = 0;
-  for (const r of cac.rows) {
-    if (String(r[0]).trim() === 'TOTAL') {
-      cpl = r[3] || 0;
-      cacVal = r[7] || 0;
-      roiVista = r[9] || 0;
-      roiAnual = r[11] || 0;
+  if (filterStart || filterEnd) {
+    for (var i = 0; i < hist.rows.length; i++) {
+      var r = hist.rows[i];
+      var d = parseGvizDate(r[0]);
+      if (d && isInRange(d)) {
+        lastRow = r;
+        if (i > 0) prevRow = hist.rows[i - 1];
+      }
+    }
+    // Find first date in range
+    for (var j = 0; j < hist.rows.length; j++) {
+      var d2 = parseGvizDate(hist.rows[j][0]);
+      if (d2 && isInRange(d2)) {
+        firstDate = formatDateFull(d2);
+        break;
+      }
+    }
+  } else {
+    lastRow = hist.rows[hist.rows.length - 1] || [];
+    prevRow = hist.rows.length > 1 ? hist.rows[hist.rows.length - 2] : [];
+    if (hist.rows.length > 0) {
+      var fd = parseGvizDate(hist.rows[0][0]);
+      firstDate = fd ? formatDateFull(fd) : '';
     }
   }
 
-  const txComp = reunioes > 0 ? compareceram / reunioes : 0;
-  const txFech = compareceram > 0 ? fechados / compareceram : 0;
-  const convLC = leads > 0 ? fechados / leads : 0;
+  if (!lastRow) lastRow = [];
+  if (!prevRow) prevRow = [];
+
+  var leads = toNum(lastRow[1]);
+  var reunioes = toNum(lastRow[2]);
+  var compareceram = toNum(lastRow[3]);
+  var fechados = toNum(lastRow[4]);
+  var receita = toNum(lastRow[5]);
+  var investMidia = toNum(lastRow[6]);
+  var investTotal = toNum(lastRow[7]);
+  var leadsHoje = leads - toNum(prevRow[1]);
+
+  // CAC_ROI TOTAL row
+  var cpl = 0, cacVal = 0, roiVista = 0;
+  for (var k = 0; k < cac.rows.length; k++) {
+    var rr = cac.rows[k];
+    if (String(rr[0]).trim() === 'TOTAL') {
+      cpl = toNum(rr[3]);
+      cacVal = toNum(rr[7]);
+      roiVista = toNum(rr[9]);
+    }
+  }
+
+  var txComp = reunioes > 0 ? compareceram / reunioes : 0;
+  var txFech = compareceram > 0 ? fechados / compareceram : 0;
+  var convLC = leads > 0 ? fechados / leads : 0;
 
   document.getElementById('k-leads').textContent = fmt(leads);
-  document.getElementById('k-leads-sub').textContent = `Hoje: +${leadsHoje}`;
+  document.getElementById('k-leads-sub').textContent = 'Hoje: +' + leadsHoje;
   document.getElementById('k-reunioes').textContent = fmt(reunioes);
-  document.getElementById('k-reunioes-sub').textContent = `Tx comparecimento: ${fmtPct(txComp)}`;
+  document.getElementById('k-reunioes-sub').textContent = 'Tx comparecimento: ' + fmtPct(txComp);
   document.getElementById('k-fechados').textContent = fmt(fechados);
-  document.getElementById('k-fechados-sub').textContent = `Tx fechamento: ${fmtPct(txFech)}`;
+  document.getElementById('k-fechados-sub').textContent = 'Tx fechamento: ' + fmtPct(txFech);
   document.getElementById('k-receita').textContent = fmtR(receita);
-  document.getElementById('k-receita-sub').textContent = `Conv. lead→cliente: ${fmtPct(convLC)}`;
+  document.getElementById('k-receita-sub').textContent = 'Conv. lead->cliente: ' + fmtPct(convLC);
   document.getElementById('k-cpl').textContent = fmtR(cpl);
   document.getElementById('k-cpl-sub').textContent = 'Midia paga';
   document.getElementById('k-cac').textContent = fmtR(cacVal);
   document.getElementById('k-cac-sub').textContent = 'Custo/cliente geral';
   document.getElementById('k-invest').textContent = fmtR(investTotal);
-  document.getElementById('k-invest-sub').textContent = `Midia: ${fmtR(investMidia)}`;
+  document.getElementById('k-invest-sub').textContent = 'Midia: ' + fmtR(investMidia);
   document.getElementById('k-roi').textContent = fmtPct(roiVista);
   document.getElementById('k-roi-sub').textContent = roiVista >= 0 ? 'Positivo' : 'Negativo';
-  document.querySelector('#k-roi').closest('.kpi').className = roiVista >= 0 ? 'kpi green' : 'kpi red';
+  document.getElementById('k-roi').closest('.kpi').className = roiVista >= 0 ? 'kpi green' : 'kpi red';
+}
 
-  const dataHoje = String(lastRow[0] || '');
-  document.getElementById('recorte').textContent = `19/05/2026 a ${dataHoje}`;
+/* ── Evolucao Diaria (line chart) ── */
+function renderHistorico() {
+  var hist = DATA.historico;
+  var labels = [], leads = [], reunioes = [], compareceram = [], fecharam = [];
 
-  // Funnel
-  const funnelData = [
+  for (var i = 0; i < hist.rows.length; i++) {
+    var r = hist.rows[i];
+    var d = parseGvizDate(r[0]);
+    if (!d) continue;
+    if (!isInRange(d)) continue;
+    labels.push(formatDateShort(d));
+    leads.push(toNum(r[1]));
+    reunioes.push(toNum(r[2]));
+    compareceram.push(toNum(r[3]));
+    fecharam.push(toNum(r[4]));
+  }
+
+  destroyChart('historico');
+  var ctx = document.getElementById('chartHistorico').getContext('2d');
+  charts.historico = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Leads', data: leads, borderColor: '#4f8cff', backgroundColor: 'rgba(79,140,255,.08)', fill: true, tension: .3, pointRadius: 2 },
+        { label: 'Reunioes', data: reunioes, borderColor: '#b197fc', backgroundColor: 'transparent', tension: .3, pointRadius: 2 },
+        { label: 'Compareceram', data: compareceram, borderColor: '#ffc048', backgroundColor: 'transparent', tension: .3, pointRadius: 2 },
+        { label: 'Fecharam', data: fecharam, borderColor: '#00d68f', backgroundColor: 'transparent', tension: .3, pointRadius: 2 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } },
+        tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': ' + fmt(c.raw); } } }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' } }
+      }
+    }
+  });
+}
+
+/* ── Leads por Dia (bar chart with average line) ── */
+function renderLeadsPorDia() {
+  var allDates = DATA.leadRows;
+  if (!allDates || allDates.length === 0) {
+    destroyChart('leadsDia');
+    return;
+  }
+
+  // Count per day
+  var countMap = {};
+  for (var i = 0; i < allDates.length; i++) {
+    var d = allDates[i];
+    if (!isInRange(d)) continue;
+    var key = formatDateFull(d);
+    countMap[key] = (countMap[key] || 0) + 1;
+  }
+
+  // Sort by date
+  var entries = Object.keys(countMap).map(function(k){
+    return { date: parseDDMMYYYY(k), label: k, count: countMap[k] };
+  });
+  entries.sort(function(a,b){ return a.date - b.date; });
+
+  var labels = entries.map(function(e){ return formatDateShort(e.date); });
+  var data = entries.map(function(e){ return e.count; });
+
+  // Compute average
+  var sum = 0;
+  for (var j = 0; j < data.length; j++) sum += data[j];
+  var avg = data.length > 0 ? sum / data.length : 0;
+  var avgLine = data.map(function(){ return avg; });
+
+  destroyChart('leadsDia');
+  var ctx = document.getElementById('chartLeadsDia').getContext('2d');
+  charts.leadsDia = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Leads', data: data, backgroundColor: 'rgba(79,140,255,.6)', borderRadius: 4, barPercentage: .7 },
+        { label: 'Media (' + avg.toFixed(1).replace('.', ',') + ')', data: avgLine, type: 'line', borderColor: '#ff6b6b', borderDash: [6,3], pointRadius: 0, borderWidth: 2, fill: false }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { padding: 14, usePointStyle: true } },
+        tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': ' + fmt(c.raw); } } }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' } }
+      }
+    }
+  });
+}
+
+/* ── Funnel ── */
+function renderFunnel() {
+  var hist = DATA.historico;
+  var lastRow = hist.rows[hist.rows.length - 1] || [];
+  var leads = toNum(lastRow[1]);
+  var reunioes = toNum(lastRow[2]);
+  var compareceram = toNum(lastRow[3]);
+  var fechados = toNum(lastRow[4]);
+
+  var funnelData = [
     { label: 'Leads', value: leads, color: 'var(--accent)' },
     { label: 'Reunioes Agendadas', value: reunioes, color: 'var(--purple)' },
     { label: 'Compareceram', value: compareceram, color: 'var(--yellow)' },
     { label: 'Fecharam', value: fechados, color: 'var(--green)' }
   ];
-  const maxVal = funnelData[0].value || 1;
-  let funnelHTML = '';
-  funnelData.forEach((f, i) => {
-    const pct = ((f.value / maxVal) * 100);
-    const convPct = i > 0 ? ((f.value / funnelData[i-1].value) * 100).toFixed(1) : '100';
-    funnelHTML += `<div class="funnel-step">
-      <div class="funnel-bar" style="width:${Math.max(pct, 12)}%;background:${f.color}">${fmt(f.value)}</div>
-      <div class="funnel-info"><strong>${f.label}</strong><br>${convPct}% da etapa anterior &middot; ${((f.value/maxVal)*100).toFixed(1)}% do topo</div>
-    </div>`;
-  });
-  document.getElementById('funnel').innerHTML = funnelHTML;
-
-  // Leads por canal (pie) - use CAC_ROI rows for channel breakdown
-  const canalData = {};
-  for (const r of cac.rows) {
-    const name = String(r[0]).trim();
-    if (name && name !== 'TOTAL' && !name.includes('PREMISSAS') && !name.includes('CUSTO') && !name.includes('MESES') && !name.includes('ROI')) {
-      canalData[name] = r[2] || 0;
-    }
+  var maxVal = funnelData[0].value || 1;
+  var html = '';
+  for (var i = 0; i < funnelData.length; i++) {
+    var f = funnelData[i];
+    var pct = (f.value / maxVal) * 100;
+    var convPct = i > 0 ? ((f.value / funnelData[i-1].value) * 100).toFixed(1) : '100.0';
+    var topPct = ((f.value / maxVal) * 100).toFixed(1);
+    html += '<div class="funnel-step">';
+    html += '<div class="funnel-bar" style="width:' + Math.max(pct, 12) + '%;background:' + f.color + '">' + fmt(f.value) + '</div>';
+    html += '<div class="funnel-info"><strong>' + f.label + '</strong><br>' + convPct.replace('.', ',') + '% da etapa anterior &middot; ' + topPct.replace('.', ',') + '% do topo</div>';
+    html += '</div>';
   }
-  if (Object.keys(canalData).length > 0) {
-    destroyChart('canal');
-    const ctx = document.getElementById('chartCanal').getContext('2d');
-    chartInstances.canal = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(canalData),
-        datasets: [{
-          data: Object.values(canalData),
-          backgroundColor: ['#6c5ce7','#00d68f','#ffc048','#4f8cff','#ff922b'],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'right', labels: { color: '#9ca3b5', font: { size: 11 }, padding: 12 } }
-        }
-      }
-    });
-  }
+  document.getElementById('funnel').innerHTML = html;
 }
 
-async function loadHistorico() {
-  const { rows } = await fetchSheet(SHEET2, 'HISTÓRICO');
-  const labels = [], leads = [], reunioes = [], compareceram = [], fecharam = [], receita = [];
-
-  for (const r of rows) {
-    const dt = String(r[0] || '');
-    if (!dt || !dt.includes('/')) continue;
-    labels.push(dt.split('/').slice(0,2).join('/'));
-    leads.push(r[1] || 0);
-    reunioes.push(r[2] || 0);
-    compareceram.push(r[3] || 0);
-    fecharam.push(r[4] || 0);
-    receita.push(r[5] || 0);
+/* ── Leads por Canal (doughnut) ── */
+function renderLeadsPorCanal() {
+  var cac = DATA.cacRoi;
+  var names = [], values = [];
+  var colors = ['#6c5ce7','#00d68f','#ffc048','#ff922b','#4f8cff'];
+  for (var i = 0; i < cac.rows.length; i++) {
+    var r = cac.rows[i];
+    var name = String(r[0]).trim();
+    if (name && name !== 'TOTAL' && name.indexOf('PREMISSAS') < 0 && name.indexOf('CUSTO') < 0 && name.indexOf('MESES') < 0 && name.indexOf('ROI') < 0) {
+      names.push(name);
+      values.push(toNum(r[2]));
+    }
   }
 
-  destroyChart('historico');
-  const ctx = document.getElementById('chartHistorico').getContext('2d');
-  chartInstances.historico = new Chart(ctx, {
-    type: 'line',
+  if (names.length === 0) return;
+
+  destroyChart('canal');
+  var ctx = document.getElementById('chartCanal').getContext('2d');
+  charts.canal = new Chart(ctx, {
+    type: 'doughnut',
     data: {
-      labels,
-      datasets: [
-        { label: 'Leads', data: leads, borderColor: '#4f8cff', backgroundColor: 'rgba(79,140,255,.08)', fill: true, tension: .3, borderWidth: 2 },
-        { label: 'Reunioes', data: reunioes, borderColor: '#b197fc', backgroundColor: 'transparent', tension: .3, borderWidth: 2 },
-        { label: 'Compareceram', data: compareceram, borderColor: '#ffc048', backgroundColor: 'transparent', tension: .3, borderWidth: 2 },
-        { label: 'Fecharam', data: fecharam, borderColor: '#00d68f', backgroundColor: 'transparent', tension: .3, borderWidth: 2 }
-      ]
+      labels: names,
+      datasets: [{
+        data: values,
+        backgroundColor: colors.slice(0, names.length),
+        borderWidth: 0
+      }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { ticks: { color: '#9ca3b5', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } },
-        y: { ticks: { color: '#9ca3b5' }, grid: { color: 'rgba(255,255,255,.06)' } }
-      },
-      plugins: { legend: { labels: { color: '#e4e6ed', font: { size: 11 } } } },
-      interaction: { intersect: false, mode: 'index' }
-    }
-  });
-}
-
-async function loadLeadsPorDia() {
-  const csv = await fetchCSV(SHEET1, 'CAMPANHA META');
-  const rows = csv.split('\n').slice(1).filter(r => r.trim());
-  const byDay = {};
-
-  for (const row of rows) {
-    const cols = parseCSVRow(row);
-    const dateStr = cols[3]?.trim();
-    if (!dateStr) continue;
-    const m = dateStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-    if (m) {
-      const d = `${m[3]}-${m[2]}-${m[1]}`;
-      byDay[d] = (byDay[d] || 0) + 1;
-    }
-  }
-
-  // Add organico
-  try {
-    const csv2 = await fetchCSV(SHEET1, 'ORGÂNICO');
-    for (const row of csv2.split('\n').slice(1).filter(r => r.trim())) {
-      const cols = parseCSVRow(row);
-      const dateStr = cols[3]?.trim();
-      if (!dateStr) continue;
-      const m = dateStr.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-      if (m) {
-        const d = `${m[3]}-${m[2]}-${m[1]}`;
-        byDay[d] = (byDay[d] || 0) + 1;
+      plugins: {
+        legend: { position: 'right', labels: { padding: 12, font: { size: 11 } } },
+        tooltip: { callbacks: { label: function(c) { return c.label + ': ' + fmt(c.raw) + ' leads'; } } }
       }
     }
-  } catch(e) {}
+  });
+}
 
-  const sorted = Object.entries(byDay).sort((a,b) => a[0].localeCompare(b[0]));
-  const labels = sorted.map(([d]) => d.split('-').reverse().slice(0,2).join('/'));
-  const values = sorted.map(([,v]) => v);
+/* ── Investimento Semanal por Canal (stacked bar) ── */
+function renderInvestSemanal() {
+  var inv = DATA.investSem;
+  if (!inv || !inv.rows.length) return;
 
-  const avg = values.length ? (values.reduce((a,b)=>a+b,0) / values.length) : 0;
+  // Skip header rows that might be in the data, and the TOTAL row
+  // Find the column indices
+  var colSemana = 0, colCanal = 1, colInvest = 4;
 
-  destroyChart('leadsDia');
-  const ctx = document.getElementById('chartLeadsDia').getContext('2d');
-  chartInstances.leadsDia = new Chart(ctx, {
+  // Group by week
+  var weeks = [];
+  var weekMap = {};
+  for (var i = 0; i < inv.rows.length; i++) {
+    var r = inv.rows[i];
+    var semana = String(r[colSemana] || '').trim();
+    var canal = String(r[colCanal] || '').trim().toUpperCase();
+    var investVal = parseMoneyValue(r[colInvest]);
+
+    // Skip TOTAL row and empty rows
+    if (!semana || semana.toUpperCase() === 'TOTAL' || canal === 'TOTAL') continue;
+    if (canal !== 'GOOGLE' && canal !== 'META') continue;
+
+    if (!weekMap[semana]) {
+      weekMap[semana] = { google: 0, meta: 0 };
+      weeks.push(semana);
+    }
+    if (canal === 'GOOGLE') weekMap[semana].google += investVal;
+    else if (canal === 'META') weekMap[semana].meta += investVal;
+  }
+
+  var labels = weeks;
+  var googleData = weeks.map(function(w){ return weekMap[w].google; });
+  var metaData = weeks.map(function(w){ return weekMap[w].meta; });
+
+  destroyChart('investSem');
+  var ctx = document.getElementById('chartInvestSem').getContext('2d');
+  charts.investSem = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels,
+      labels: labels,
       datasets: [
-        { label: 'Leads/dia', data: values, backgroundColor: 'rgba(79,140,255,.6)', borderRadius: 4, borderSkipped: false },
-        { label: `Media (${avg.toFixed(1)})`, data: Array(values.length).fill(avg), type: 'line', borderColor: '#ff6b6b', borderDash: [5,5], borderWidth: 2, pointRadius: 0 }
+        { label: 'Google', data: googleData, backgroundColor: 'rgba(0,214,143,.65)', borderRadius: 4 },
+        { label: 'Meta', data: metaData, backgroundColor: 'rgba(108,92,231,.65)', borderRadius: 4 }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { ticks: { color: '#9ca3b5', font: { size: 9 }, maxRotation: 45 }, grid: { display: false } },
-        y: { ticks: { color: '#9ca3b5' }, grid: { color: 'rgba(255,255,255,.06)' }, beginAtZero: true }
+      plugins: {
+        legend: { labels: { padding: 14, usePointStyle: true } },
+        tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': ' + fmtR(c.raw); } } }
       },
-      plugins: { legend: { labels: { color: '#e4e6ed', font: { size: 11 } } } }
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' }, ticks: { callback: function(v){ return fmtR(v); } } }
+      }
     }
   });
 }
 
-async function loadCacRoi() {
-  const { rows } = await fetchSheet(SHEET2, 'CAC_ROI');
-
-  const channels = [];
-  for (const r of rows) {
-    const name = String(r[0] || '').trim();
-    if (!name || name.includes('PREMISSAS') || name.includes('CUSTO MENSAL') || name.includes('MESES') || name.includes('ROI')) continue;
-    channels.push({
-      name, invest: r[1] || 0, leads: r[2] || 0, cpl: r[3] || 0,
-      reunioes: r[4] || 0, custoReuniao: r[5] || 0, fechamentos: r[6] || 0,
-      cac: r[7] || 0, receitaVista: r[8] || 0, roiVista: r[9] || 0,
-      receitaAnual: r[10] || 0, roiAnual: r[11] || 0
-    });
+/* ── Leads por Semana (bar chart) ── */
+function renderLeadsPorSemana() {
+  var allDates = DATA.leadRows;
+  if (!allDates || allDates.length === 0) {
+    destroyChart('leadsSemana');
+    return;
   }
 
-  // Chart
-  const nonTotal = channels.filter(c => c.name !== 'TOTAL');
-  destroyChart('cacRoi');
-  const ctx = document.getElementById('chartCacRoi').getContext('2d');
-  chartInstances.cacRoi = new Chart(ctx, {
+  // Group by ISO week
+  var weekMap = {};
+  var weekKeys = [];
+  for (var i = 0; i < allDates.length; i++) {
+    var d = allDates[i];
+    if (!isInRange(d)) continue;
+    var wk = getISOWeekKey(d);
+    if (!weekMap[wk]) {
+      weekMap[wk] = { count: 0, start: d, end: d };
+      weekKeys.push(wk);
+    }
+    weekMap[wk].count++;
+    if (d < weekMap[wk].start) weekMap[wk].start = d;
+    if (d > weekMap[wk].end) weekMap[wk].end = d;
+  }
+
+  weekKeys.sort();
+  var labels = weekKeys.map(function(wk){
+    var w = weekMap[wk];
+    return formatDateShort(w.start) + '-' + formatDateShort(w.end);
+  });
+  var data = weekKeys.map(function(wk){ return weekMap[wk].count; });
+
+  destroyChart('leadsSemana');
+  var ctx = document.getElementById('chartLeadsSemana').getContext('2d');
+  charts.leadsSemana = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: nonTotal.map(c => c.name),
+      labels: labels,
       datasets: [
-        { label: 'CPL', data: nonTotal.map(c => c.cpl), backgroundColor: '#4f8cff', borderRadius: 4 },
-        { label: 'CAC', data: nonTotal.map(c => c.cac), backgroundColor: '#ff6b6b', borderRadius: 4 }
+        { label: 'Leads/semana', data: data, backgroundColor: 'rgba(79,140,255,.55)', borderRadius: 4, barPercentage: .65 }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { ticks: { color: '#9ca3b5', font: { size: 10 } }, grid: { display: false } },
-        y: { ticks: { color: '#9ca3b5', callback: v => 'R$' + v }, grid: { color: 'rgba(255,255,255,.06)' } }
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: function(c) { return fmt(c.raw) + ' leads'; } } }
       },
-      plugins: { legend: { labels: { color: '#e4e6ed', font: { size: 11 } } } }
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' } }
+      }
     }
   });
+}
 
-  // Table
-  let html = '<table><thead><tr><th>Canal</th><th>Investimento</th><th>Leads</th><th>CPL</th><th>Reunioes</th><th>Fecham.</th><th>CAC</th><th>Receita</th><th>ROI Vista</th><th>ROI Anual</th></tr></thead><tbody>';
-  for (const c of channels) {
-    const tagClass = c.name.includes('META') ? 'tag-meta' : c.name.includes('GOOGLE') ? 'tag-google' : c.name.includes('CAPT') ? 'tag-capt' : '';
-    const roiColor = c.roiVista >= 0 ? 'color:var(--green)' : 'color:var(--red)';
-    html += `<tr>
-      <td><span class="tag ${tagClass}">${c.name}</span></td>
-      <td>${fmtR(c.invest)}</td><td>${fmt(c.leads)}</td><td>${fmtR(c.cpl)}</td>
-      <td>${fmt(c.reunioes)}</td><td>${fmt(c.fechamentos)}</td><td>${fmtR(c.cac)}</td>
-      <td>${fmtR(c.receitaVista)}</td>
-      <td style="${roiColor}">${fmtPct(c.roiVista)}</td>
-      <td style="${c.roiAnual >= 0 ? 'color:var(--green)' : 'color:var(--red)'}">${fmtPct(c.roiAnual)}</td>
-    </tr>`;
+/* ── CAC / ROI por Canal (grouped bar) ── */
+function renderCacRoiBar() {
+  var cac = DATA.cacRoi;
+  var names = [], cplData = [], cacData = [];
+
+  for (var i = 0; i < cac.rows.length; i++) {
+    var r = cac.rows[i];
+    var name = String(r[0]).trim();
+    if (name && name !== 'TOTAL' && name.indexOf('PREMISSAS') < 0 && name.indexOf('CUSTO') < 0 && name.indexOf('MESES') < 0 && name.indexOf('ROI') < 0) {
+      names.push(name);
+      cplData.push(toNum(r[3]));
+      cacData.push(toNum(r[7]));
+    }
   }
+
+  if (names.length === 0) return;
+
+  destroyChart('cacRoiBar');
+  var ctx = document.getElementById('chartCacRoiBar').getContext('2d');
+  charts.cacRoiBar = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: names,
+      datasets: [
+        { label: 'CPL', data: cplData, backgroundColor: 'rgba(79,140,255,.6)', borderRadius: 4 },
+        { label: 'CAC', data: cacData, backgroundColor: 'rgba(255,107,107,.6)', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { padding: 14, usePointStyle: true } },
+        tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': ' + fmtR(c.raw); } } }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' }, ticks: { callback: function(v){ return fmtR(v); } } }
+      }
+    }
+  });
+}
+
+/* ── CAC / ROI Table ── */
+function renderCacRoiTable() {
+  var cac = DATA.cacRoi;
+  var html = '<table><thead><tr>';
+  // Column headers
+  var colNames = ['Canal', 'Investimento', 'Leads', 'CPL', 'Reunioes', 'Custo/Reuniao', 'Fecham.', 'Custo/Cliente', 'Receita a Vista', 'ROI a Vista', 'Receita Anual', 'ROI / Ano'];
+  for (var h = 0; h < colNames.length; h++) {
+    html += '<th>' + colNames[h] + '</th>';
+  }
+  html += '</tr></thead><tbody>';
+
+  for (var i = 0; i < cac.rows.length; i++) {
+    var r = cac.rows[i];
+    var name = String(r[0]).trim();
+    // Skip premissa rows
+    if (name.indexOf('PREMISSAS') >= 0 || name.indexOf('CUSTO MENSAL') >= 0 || name.indexOf('MESES') >= 0) continue;
+    if (name.indexOf('ROI') >= 0 && name !== 'TOTAL') continue;
+    if (!name) continue;
+
+    var tagClass = '';
+    var upperName = name.toUpperCase();
+    if (upperName.indexOf('META') >= 0) tagClass = 'tag-meta';
+    else if (upperName.indexOf('GOOGLE') >= 0) tagClass = 'tag-google';
+    else if (upperName.indexOf('CAPTA') >= 0) tagClass = 'tag-capt';
+    else if (upperName === 'TOTAL') tagClass = 'tag-total';
+
+    html += '<tr>';
+    html += '<td><span class="tag ' + tagClass + '">' + name + '</span></td>';
+    html += '<td>' + fmtR(toNum(r[1])) + '</td>';
+    html += '<td>' + fmt(toNum(r[2])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[3])) + '</td>';
+    html += '<td>' + fmt(toNum(r[4])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[5])) + '</td>';
+    html += '<td>' + fmt(toNum(r[6])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[7])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[8])) + '</td>';
+    // ROI a Vista
+    var roiV = toNum(r[9]);
+    html += '<td class="' + (roiV >= 0 ? 'roi-pos' : 'roi-neg') + '">' + fmtPct(roiV) + '</td>';
+    html += '<td>' + fmtR(toNum(r[10])) + '</td>';
+    // ROI / Ano
+    var roiA = toNum(r[11]);
+    html += '<td class="' + (roiA >= 0 ? 'roi-pos' : 'roi-neg') + '">' + fmtPct(roiA) + '</td>';
+    html += '</tr>';
+  }
+
   html += '</tbody></table>';
   document.getElementById('tabelaCac').innerHTML = html;
 }
 
-async function loadMensal() {
-  const { rows } = await fetchSheet(SHEET2, 'MENSAL');
-
-  let html = '<table><thead><tr><th>Mes</th><th>Situacao</th><th>Leads</th><th>Invest. Total</th><th>Clientes</th><th>CAC</th><th>Receita Vista</th><th>Receita Anual</th><th>ROI Vista</th><th>ROI Anual</th></tr></thead><tbody>';
-  for (const r of rows) {
-    const mes = String(r[0] || '').trim();
-    if (!mes) continue;
-    const roiV = r[11] || 0;
-    const roiA = r[12] || 0;
-    html += `<tr>
-      <td><strong>${mes}</strong></td><td>${r[1] || ''}</td><td>${fmt(r[2] || 0)}</td>
-      <td>${fmtR(r[5] || 0)}</td><td>${fmt(r[7] || 0)}</td><td>${fmtR(r[8] || 0)}</td>
-      <td>${fmtR(r[9] || 0)}</td><td>${fmtR(r[10] || 0)}</td>
-      <td style="${roiV >= 0 ? 'color:var(--green)' : 'color:var(--red)'}">${typeof roiV === 'number' ? fmtPct(roiV) : roiV}</td>
-      <td style="${roiA >= 0 ? 'color:var(--green)' : 'color:var(--red)'}">${typeof roiA === 'number' ? fmtPct(roiA) : roiA}</td>
-    </tr>`;
+/* ── Visao Mensal (table) ── */
+function renderMensalTable() {
+  var mensal = DATA.mensal;
+  var html = '<table><thead><tr>';
+  var colNames = ['Mes', 'Situacao', 'Leads', 'Invest. Midia', 'Capt. Ativa', 'Invest. Total', '% Periodo', 'Clientes Fech.', 'CAC', 'Receita a Vista', 'Receita Anual', 'ROI a Vista', 'ROI / Ano'];
+  for (var h = 0; h < colNames.length; h++) {
+    html += '<th>' + colNames[h] + '</th>';
   }
+  html += '</tr></thead><tbody>';
+
+  for (var i = 0; i < mensal.rows.length; i++) {
+    var r = mensal.rows[i];
+    var mes = String(r[0]).trim();
+    if (!mes) continue;
+    // Skip "DEFASAGEM TEMPORAL" note row
+    if (mes.toUpperCase().indexOf('DEFASAGEM') >= 0) continue;
+
+    var isTotalRow = mes.toUpperCase().indexOf('TOTAL') >= 0;
+
+    html += '<tr' + (isTotalRow ? ' style="font-weight:700;background:rgba(79,140,255,.05)"' : '') + '>';
+    html += '<td>' + mes + '</td>';
+    html += '<td>' + String(r[1] || '') + '</td>';
+    html += '<td>' + fmt(toNum(r[2])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[3])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[4])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[5])) + '</td>';
+    // % periodo
+    var pctPer = toNum(r[6]);
+    html += '<td>' + (pctPer ? fmtPct(pctPer) : '-') + '</td>';
+    html += '<td>' + fmt(toNum(r[7])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[8])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[9])) + '</td>';
+    html += '<td>' + fmtR(toNum(r[10])) + '</td>';
+    // ROI a Vista
+    var rv = toNum(r[11]);
+    html += '<td class="' + (rv >= 0 ? 'roi-pos' : 'roi-neg') + '">' + fmtPct(rv) + '</td>';
+    // ROI / Ano
+    var ra = toNum(r[12]);
+    html += '<td class="' + (ra >= 0 ? 'roi-pos' : 'roi-neg') + '">' + fmtPct(ra) + '</td>';
+    html += '</tr>';
+  }
+
   html += '</tbody></table>';
   document.getElementById('tabelaMensal').innerHTML = html;
 }
 
-async function loadInvestSemanal() {
-  const { rows } = await fetchSheet(SHEET2, 'INVEST_SEM');
-  const labels = [], google = [], meta = [], total = [];
+/* ── Receita vs Investimento por Mes (bar chart) ── */
+function renderReceitaInvest() {
+  var mensal = DATA.mensal;
+  var labels = [], investData = [], receitaData = [];
 
-  for (const r of rows) {
-    const sem = String(r[0] || '').trim();
-    if (!sem || sem.includes('TOTAL') || sem.includes('OBSERV')) continue;
-    const short = sem.length > 12 ? sem.substring(0, 12) + '...' : sem;
-    labels.push(short);
-    google.push(r[1] || 0);
-    meta.push(r[2] || 0);
-    total.push((r[1] || 0) + (r[2] || 0));
+  for (var i = 0; i < mensal.rows.length; i++) {
+    var r = mensal.rows[i];
+    var mes = String(r[0]).trim();
+    if (!mes) continue;
+    if (mes.toUpperCase().indexOf('TOTAL') >= 0) continue;
+    if (mes.toUpperCase().indexOf('DEFASAGEM') >= 0) continue;
+
+    labels.push(mes);
+    investData.push(toNum(r[5]));  // Invest. Total
+    receitaData.push(toNum(r[9])); // Receita a Vista
   }
 
-  destroyChart('invest');
-  const ctx = document.getElementById('chartInvest').getContext('2d');
-  chartInstances.invest = new Chart(ctx, {
+  if (labels.length === 0) return;
+
+  destroyChart('receitaInvest');
+  var ctx = document.getElementById('chartReceitaInvest').getContext('2d');
+  charts.receitaInvest = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels,
+      labels: labels,
       datasets: [
-        { label: 'Google', data: google, backgroundColor: '#00d68f', borderRadius: 3, stack: 'a' },
-        { label: 'Meta', data: meta, backgroundColor: '#6c5ce7', borderRadius: 3, stack: 'a' }
+        { label: 'Investimento Total', data: investData, backgroundColor: 'rgba(255,107,107,.55)', borderRadius: 4 },
+        { label: 'Receita a Vista', data: receitaData, backgroundColor: 'rgba(0,214,143,.55)', borderRadius: 4 }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { stacked: true, ticks: { color: '#9ca3b5', font: { size: 8 }, maxRotation: 45 }, grid: { display: false } },
-        y: { stacked: true, ticks: { color: '#9ca3b5', callback: v => 'R$' + v }, grid: { color: 'rgba(255,255,255,.06)' } }
+      plugins: {
+        legend: { labels: { padding: 14, usePointStyle: true } },
+        tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': ' + fmtR(c.raw); } } }
       },
-      plugins: { legend: { labels: { color: '#e4e6ed', font: { size: 11 } } } }
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' }, ticks: { callback: function(v){ return fmtR(v); } } }
+      }
     }
   });
 }
 
-// Load on page load
-document.addEventListener('DOMContentLoaded', loadAll);
+/* ── ROI Mensal (line chart) ── */
+function renderRoiMensal() {
+  var mensal = DATA.mensal;
+  var labels = [], roiVistaData = [], roiAnualData = [];
+
+  for (var i = 0; i < mensal.rows.length; i++) {
+    var r = mensal.rows[i];
+    var mes = String(r[0]).trim();
+    if (!mes) continue;
+    if (mes.toUpperCase().indexOf('TOTAL') >= 0) continue;
+    if (mes.toUpperCase().indexOf('DEFASAGEM') >= 0) continue;
+
+    labels.push(mes);
+    roiVistaData.push(toNum(r[11]) * 100);  // Convert to percentage for display
+    roiAnualData.push(toNum(r[12]) * 100);
+  }
+
+  if (labels.length === 0) return;
+
+  destroyChart('roiMensal');
+  var ctx = document.getElementById('chartRoiMensal').getContext('2d');
+  charts.roiMensal = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'ROI a Vista (%)', data: roiVistaData, borderColor: '#4f8cff', backgroundColor: 'rgba(79,140,255,.08)', fill: true, tension: .3, pointRadius: 4 },
+        { label: 'ROI / Ano (%)', data: roiAnualData, borderColor: '#00d68f', backgroundColor: 'transparent', tension: .3, pointRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { padding: 14, usePointStyle: true } },
+        tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': ' + c.raw.toFixed(1).replace('.', ',') + '%'; } } }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: 'rgba(42,46,61,.5)' },
+          ticks: { callback: function(v){ return v.toFixed(0) + '%'; } }
+        }
+      }
+    }
+  });
+}
+
+/* ── Reload wrapper ── */
+function reloadAll() {
+  // Clear cache to force re-fetch
+  DATA.historico = null;
+  DATA.cacRoi = null;
+  DATA.mensal = null;
+  DATA.investSem = null;
+  DATA.leadRows = null;
+  loadAllData();
+}
+window.reloadAll = reloadAll;
+
+/* ── Init ── */
+loadAllData();
+
+})();
 </script>
 </body>
 </html>
