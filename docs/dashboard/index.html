@@ -274,6 +274,7 @@ var DATA = {
   investSem: null,
   leadRows: null // combined leads from all tabs
 };
+var currentTab = 'diario';
 
 /* ── Chart instance map ── */
 var charts = {};
@@ -458,18 +459,20 @@ function closeSidebar() {
 window.closeSidebar = closeSidebar;
 
 function switchTab(tab) {
-  // Update navbar tab buttons
+  currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach(function(b){
     b.classList.toggle('active', b.getAttribute('data-tab') === tab);
   });
-  // Update sidebar tab buttons
   document.querySelectorAll('.sidebar-tab').forEach(function(b){
     b.classList.toggle('active', b.getAttribute('data-tab') === tab);
   });
-  // Show/hide tab content
   document.querySelectorAll('.tab-content').forEach(function(el){
     el.classList.toggle('active', el.id === 'tab-' + tab);
   });
+  if (DATA.historico) {
+    renderKPIs();
+    renderFunnel();
+  }
 }
 window.switchTab = switchTab;
 
@@ -563,54 +566,89 @@ function renderAll() {
 }
 
 /* ── KPIs ── */
-function renderKPIs() {
+function getKPIData() {
   var hist = DATA.historico;
   var cac = DATA.cacRoi;
+  var mensal = DATA.mensal;
+  var lastRow = hist.rows[hist.rows.length - 1] || [];
+  var prevRow = hist.rows.length > 1 ? hist.rows[hist.rows.length - 2] : [];
 
-  // If filtered, find last row within range; otherwise use last row
-  var lastRow = null;
-  var prevRow = null;
-  var firstDate = '';
+  var leads, reunioes, compareceram, fechados, receita, investMidia, investTotal;
+  var subLabel = '';
 
-  if (filterStart || filterEnd) {
-    for (var i = 0; i < hist.rows.length; i++) {
-      var r = hist.rows[i];
-      var d = parseGvizDate(r[0]);
-      if (d && isInRange(d)) {
-        lastRow = r;
-        if (i > 0) prevRow = hist.rows[i - 1];
-      }
+  if (currentTab === 'mensal' && mensal) {
+    // Use current month row from MENSAL tab, fallback to TOTAL
+    var now = new Date();
+    var mesNomes = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+    var mesAtual = mesNomes[now.getMonth()];
+    var mesRow = null;
+    var totalRow = null;
+    for (var m = 0; m < mensal.rows.length; m++) {
+      var nome = String(mensal.rows[m][0] || '').trim().toUpperCase();
+      if (nome === mesAtual) mesRow = mensal.rows[m];
+      if (nome.indexOf('TOTAL') >= 0) totalRow = mensal.rows[m];
     }
-    // Find first date in range
-    for (var j = 0; j < hist.rows.length; j++) {
-      var d2 = parseGvizDate(hist.rows[j][0]);
-      if (d2 && isInRange(d2)) {
-        firstDate = formatDateFull(d2);
-        break;
-      }
+    var row = mesRow || totalRow || [];
+    leads = toNum(row[2]);
+    fechados = toNum(row[7]);
+    receita = parseMoneyValue(row[9]);
+    investMidia = parseMoneyValue(row[3]);
+    investTotal = parseMoneyValue(row[5]);
+    // reuniões/compareceram not in MENSAL — derive from HISTÓRICO for the month
+    var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    var startRow = null;
+    for (var h = 0; h < hist.rows.length; h++) {
+      var dd = parseGvizDate(hist.rows[h][0]);
+      if (dd && dd >= monthStart) { startRow = hist.rows[h > 0 ? h - 1 : 0]; break; }
     }
+    if (!startRow) startRow = hist.rows[0] || [];
+    reunioes = toNum(lastRow[2]) - toNum(startRow[2]);
+    compareceram = toNum(lastRow[3]) - toNum(startRow[3]);
+    subLabel = mesAtual.charAt(0) + mesAtual.slice(1).toLowerCase();
+  } else if (currentTab === 'semanal') {
+    // This week: diff from Monday to last row
+    var today = new Date();
+    var dayOfWeek = today.getDay();
+    var mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    var monday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - mondayOffset);
+    var weekStartRow = null;
+    for (var w = 0; w < hist.rows.length; w++) {
+      var dw = parseGvizDate(hist.rows[w][0]);
+      if (dw && dw >= monday) { weekStartRow = hist.rows[w > 0 ? w - 1 : 0]; break; }
+    }
+    if (!weekStartRow) weekStartRow = hist.rows[0] || [];
+    leads = toNum(lastRow[1]) - toNum(weekStartRow[1]);
+    reunioes = toNum(lastRow[2]) - toNum(weekStartRow[2]);
+    compareceram = toNum(lastRow[3]) - toNum(weekStartRow[3]);
+    fechados = toNum(lastRow[4]) - toNum(weekStartRow[4]);
+    receita = toNum(lastRow[5]) - toNum(weekStartRow[5]);
+    investMidia = toNum(lastRow[6]) - toNum(weekStartRow[6]);
+    investTotal = toNum(lastRow[7]) - toNum(weekStartRow[7]);
+    subLabel = 'Esta semana';
   } else {
-    lastRow = hist.rows[hist.rows.length - 1] || [];
-    prevRow = hist.rows.length > 1 ? hist.rows[hist.rows.length - 2] : [];
-    if (hist.rows.length > 0) {
-      var fd = parseGvizDate(hist.rows[0][0]);
-      firstDate = fd ? formatDateFull(fd) : '';
-    }
+    // Diário: cumulative total (last row)
+    leads = toNum(lastRow[1]);
+    reunioes = toNum(lastRow[2]);
+    compareceram = toNum(lastRow[3]);
+    fechados = toNum(lastRow[4]);
+    receita = toNum(lastRow[5]);
+    investMidia = toNum(lastRow[6]);
+    investTotal = toNum(lastRow[7]);
+    subLabel = 'Total acumulado';
   }
 
-  if (!lastRow) lastRow = [];
-  if (!prevRow) prevRow = [];
+  // Prevent negative from diffs
+  leads = Math.max(0, leads || 0);
+  reunioes = Math.max(0, reunioes || 0);
+  compareceram = Math.max(0, compareceram || 0);
+  fechados = Math.max(0, fechados || 0);
+  receita = Math.max(0, receita || 0);
+  investMidia = Math.max(0, investMidia || 0);
+  investTotal = Math.max(0, investTotal || 0);
 
-  var leads = toNum(lastRow[1]);
-  var reunioes = toNum(lastRow[2]);
-  var compareceram = toNum(lastRow[3]);
-  var fechados = toNum(lastRow[4]);
-  var receita = toNum(lastRow[5]);
-  var investMidia = toNum(lastRow[6]);
-  var investTotal = toNum(lastRow[7]);
-  var leadsHoje = leads - toNum(prevRow[1]);
+  var leadsHoje = toNum(lastRow[1]) - toNum(prevRow[1]);
 
-  // CAC_ROI TOTAL row
+  // CPL / CAC / ROI from CAC_ROI TOTAL row
   var cpl = 0, cacVal = 0, roiVista = 0;
   for (var k = 0; k < cac.rows.length; k++) {
     var rr = cac.rows[k];
@@ -621,27 +659,44 @@ function renderKPIs() {
     }
   }
 
-  var txComp = reunioes > 0 ? compareceram / reunioes : 0;
-  var txFech = compareceram > 0 ? fechados / compareceram : 0;
-  var convLC = leads > 0 ? fechados / leads : 0;
+  // Recalculate CPL/CAC/ROI for the period when not using totals
+  if (currentTab !== 'diario') {
+    cpl = leads > 0 ? investMidia / leads : 0;
+    cacVal = fechados > 0 ? investTotal / fechados : 0;
+    roiVista = investTotal > 0 ? (receita - investTotal) / investTotal : 0;
+  }
 
-  document.getElementById('k-leads').textContent = fmt(leads);
-  document.getElementById('k-leads-sub').textContent = 'Hoje: +' + leadsHoje;
-  document.getElementById('k-reunioes').textContent = fmt(reunioes);
+  return {
+    leads: leads, reunioes: reunioes, compareceram: compareceram,
+    fechados: fechados, receita: receita, investMidia: investMidia,
+    investTotal: investTotal, leadsHoje: leadsHoje,
+    cpl: cpl, cacVal: cacVal, roiVista: roiVista, subLabel: subLabel
+  };
+}
+
+function renderKPIs() {
+  var d = getKPIData();
+  var txComp = d.reunioes > 0 ? d.compareceram / d.reunioes : 0;
+  var txFech = d.compareceram > 0 ? d.fechados / d.compareceram : 0;
+  var convLC = d.leads > 0 ? d.fechados / d.leads : 0;
+
+  document.getElementById('k-leads').textContent = fmt(d.leads);
+  document.getElementById('k-leads-sub').textContent = currentTab === 'diario' ? 'Hoje: +' + d.leadsHoje : d.subLabel;
+  document.getElementById('k-reunioes').textContent = fmt(d.reunioes);
   document.getElementById('k-reunioes-sub').textContent = 'Tx comparecimento: ' + fmtPct(txComp);
-  document.getElementById('k-fechados').textContent = fmt(fechados);
+  document.getElementById('k-fechados').textContent = fmt(d.fechados);
   document.getElementById('k-fechados-sub').textContent = 'Tx fechamento: ' + fmtPct(txFech);
-  document.getElementById('k-receita').textContent = fmtR(receita);
+  document.getElementById('k-receita').textContent = fmtR(d.receita);
   document.getElementById('k-receita-sub').textContent = 'Conv. lead->cliente: ' + fmtPct(convLC);
-  document.getElementById('k-cpl').textContent = fmtR(cpl);
-  document.getElementById('k-cpl-sub').textContent = 'Midia paga';
-  document.getElementById('k-cac').textContent = fmtR(cacVal);
+  document.getElementById('k-cpl').textContent = fmtR(d.cpl);
+  document.getElementById('k-cpl-sub').textContent = currentTab === 'diario' ? 'Midia paga' : d.subLabel;
+  document.getElementById('k-cac').textContent = fmtR(d.cacVal);
   document.getElementById('k-cac-sub').textContent = 'Custo/cliente geral';
-  document.getElementById('k-invest').textContent = fmtR(investTotal);
-  document.getElementById('k-invest-sub').textContent = 'Midia: ' + fmtR(investMidia);
-  document.getElementById('k-roi').textContent = fmtPct(roiVista);
-  document.getElementById('k-roi-sub').textContent = roiVista >= 0 ? 'Positivo' : 'Negativo';
-  document.getElementById('k-roi').closest('.kpi').className = roiVista >= 0 ? 'kpi green' : 'kpi red';
+  document.getElementById('k-invest').textContent = fmtR(d.investTotal);
+  document.getElementById('k-invest-sub').textContent = 'Midia: ' + fmtR(d.investMidia);
+  document.getElementById('k-roi').textContent = fmtPct(d.roiVista);
+  document.getElementById('k-roi-sub').textContent = d.roiVista >= 0 ? 'Positivo' : 'Negativo';
+  document.getElementById('k-roi').closest('.kpi').className = d.roiVista >= 0 ? 'kpi green' : 'kpi red';
 }
 
 /* ── Evolucao Diaria (line chart) ── */
@@ -748,25 +803,20 @@ function renderLeadsPorDia() {
 
 /* ── Funnel ── */
 function renderFunnel() {
-  var hist = DATA.historico;
-  var lastRow = hist.rows[hist.rows.length - 1] || [];
-  var leads = toNum(lastRow[1]);
-  var reunioes = toNum(lastRow[2]);
-  var compareceram = toNum(lastRow[3]);
-  var fechados = toNum(lastRow[4]);
-
+  var d = getKPIData();
   var funnelData = [
-    { label: 'Leads', value: leads, color: 'var(--accent)' },
-    { label: 'Reunioes Agendadas', value: reunioes, color: 'var(--purple)' },
-    { label: 'Compareceram', value: compareceram, color: 'var(--yellow)' },
-    { label: 'Fecharam', value: fechados, color: 'var(--green)' }
+    { label: 'Leads', value: d.leads, color: 'var(--accent)' },
+    { label: 'Reunioes Agendadas', value: d.reunioes, color: 'var(--purple)' },
+    { label: 'Compareceram', value: d.compareceram, color: 'var(--yellow)' },
+    { label: 'Fecharam', value: d.fechados, color: 'var(--green)' }
   ];
   var maxVal = funnelData[0].value || 1;
   var html = '';
   for (var i = 0; i < funnelData.length; i++) {
     var f = funnelData[i];
     var pct = (f.value / maxVal) * 100;
-    var convPct = i > 0 ? ((f.value / funnelData[i-1].value) * 100).toFixed(1) : '100.0';
+    var prevVal = i > 0 ? funnelData[i-1].value : f.value;
+    var convPct = prevVal > 0 ? ((f.value / prevVal) * 100).toFixed(1) : '0.0';
     var topPct = ((f.value / maxVal) * 100).toFixed(1);
     html += '<div class="funnel-step">';
     html += '<div class="funnel-bar" style="width:' + Math.max(pct, 12) + '%;background:' + f.color + '">' + fmt(f.value) + '</div>';
