@@ -1597,25 +1597,26 @@ function renderComercial() {
   var cols = crm.columns;
   var total = crm.total;
 
-  // Grouped metrics
-  var entradaTotal = cols[0].total + cols[1].total + cols[2].total + cols[3].total; // stages 1-4
-  var reunioesAgendadas = cols[4].total + cols[5].total + cols[6].total; // stages 5-7
-  var reunioesTotal = reunioesAgendadas + cols[7].total + cols[8].total; // 5-9 (all meeting stages)
-  var compareceram = cols[8].total; // stage 9
-  var naoCompareceu = cols[7].total; // stage 8
+  // Accumulated metrics (everyone who PASSED through each phase)
+  var reunioesAcum = 0; // stages 5-13: everyone who reached meeting phase
+  for (var ri = 4; ri <= 12; ri++) reunioesAcum += cols[ri].total;
+  var reunioesRealizadas = cols[7].total + cols[8].total; // stages 8-9: meetings that already happened (no contract yet)
+  for (var ci = 9; ci <= 12; ci++) reunioesRealizadas += cols[ci].total; // plus stages 10-13
+  var compareceramAcum = cols[8].total; // stage 9
+  for (var ca = 9; ca <= 12; ca++) compareceramAcum += cols[ca].total; // stages 9-13
   var fechados = cols[9].total + cols[10].total + cols[11].total + cols[12].total; // stages 10-13
   var perdidos = cols[13].total + cols[14].total; // stages 14-15
 
-  var txAgendamento = entradaTotal > 0 ? reunioesTotal / (entradaTotal + reunioesTotal) : 0;
-  var txComparecimento = (compareceram + naoCompareceu) > 0 ? compareceram / (compareceram + naoCompareceu) : 0;
-  var txFechamento = compareceram > 0 ? fechados / compareceram : 0;
-  var txConversaoGeral = total > 0 ? fechados / total : 0;
+  var txReuniaoTotal = total > 0 ? reunioesAcum / total : 0;
+  var txComparecimento = reunioesRealizadas > 0 ? compareceramAcum / reunioesRealizadas : 0;
+  var txFechamento = compareceramAcum > 0 ? fechados / compareceramAcum : 0;
 
   // KPI cards
   var html = '';
   html += '<div class="metric-card accent"><div class="m-label">Total no CRM</div><div class="m-value">' + fmt(total) + '</div><div class="m-detail">leads no Comercial</div></div>';
-  html += '<div class="metric-card purple"><div class="m-label">Reunioes Agendadas</div><div class="m-value">' + fmt(reunioesAgendadas) + '</div><div class="m-detail">aguardando reuniao</div></div>';
-  html += '<div class="metric-card green"><div class="m-label">Contratos Assinados</div><div class="m-value">' + fmt(fechados) + '</div><div class="m-detail">' + fmtPct(txConversaoGeral) + ' do total</div></div>';
+  html += '<div class="metric-card purple"><div class="m-label">Reunioes (acumulado)</div><div class="m-value">' + fmt(reunioesAcum) + '</div><div class="m-detail">' + fmtPct(txReuniaoTotal) + ' do total chegaram a reuniao</div></div>';
+  html += '<div class="metric-card yellow"><div class="m-label">Compareceram (acumulado)</div><div class="m-value">' + fmt(compareceramAcum) + '</div><div class="m-detail">' + fmtPct(txComparecimento) + ' das ' + fmt(reunioesRealizadas) + ' reunioes realizadas</div></div>';
+  html += '<div class="metric-card green"><div class="m-label">Contratos Assinados</div><div class="m-value">' + fmt(fechados) + '</div><div class="m-detail">' + fmtPct(txFechamento) + ' dos que compareceram</div></div>';
   html += '<div class="metric-card red"><div class="m-label">Perdidos / Desqualificados</div><div class="m-value">' + fmt(perdidos) + '</div><div class="m-detail">' + fmtPct(total > 0 ? perdidos / total : 0) + ' do total</div></div>';
   document.getElementById('crm-metrics').innerHTML = html;
 
@@ -1644,12 +1645,12 @@ function renderComercial() {
   }
   document.getElementById('crm-stages').innerHTML = stagesHtml;
 
-  // CRM Funnel (grouped)
+  // CRM Funnel (accumulated — how many passed through each phase)
   var funnelData = [
-    { label: 'Entrada', value: entradaTotal + reunioesTotal + compareceram + fechados + perdidos, color: 'var(--accent)' },
-    { label: 'Reunioes Agendadas', value: reunioesAgendadas, color: 'var(--purple)' },
-    { label: 'Compareceram', value: compareceram, color: 'var(--yellow)' },
-    { label: 'Fecharam', value: fechados, color: 'var(--green)' }
+    { label: 'Entraram no Comercial', value: total, color: 'var(--accent)' },
+    { label: 'Chegaram a Reuniao', value: reunioesAcum, color: 'var(--purple)' },
+    { label: 'Compareceram', value: compareceramAcum, color: 'var(--yellow)' },
+    { label: 'Fecharam Contrato', value: fechados, color: 'var(--green)' }
   ];
   var maxFunnel = funnelData[0].value || 1;
   var funnelHtml = '';
