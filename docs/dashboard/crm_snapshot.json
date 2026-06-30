@@ -1,0 +1,25 @@
+{
+  "updated_at": "2026-06-30T16:00:00",
+  "board_id": 2568,
+  "board_name": "CRM - Comercial",
+  "flow_ns": "f175863",
+  "total": 1448,
+  "columns": [
+    {"order":1,"name":"LEAD ENTROU NO COMERCIAL","total":240,"entered_today":0,"entered_week":9,"entered_month":17},
+    {"order":2,"name":"LEAD NÃO DEU A 1ª RESPOSTA","total":579,"entered_today":0,"entered_week":1,"entered_month":10},
+    {"order":3,"name":"LEAD EM ATENDIMENTO PELA IA","total":137,"entered_today":0,"entered_week":0,"entered_month":6},
+    {"order":4,"name":"LEAD CHEGOU ATÉ AGENDAMENTO","total":71,"entered_today":0,"entered_week":3,"entered_month":14},
+    {"order":5,"name":"REUNIÃO AGENDADA CLIENTES","total":6,"entered_today":0,"entered_week":1,"entered_month":1},
+    {"order":6,"name":"REUNIÃO AGENDADA - ASSESSORIA","total":45,"entered_today":0,"entered_week":0,"entered_month":10},
+    {"order":7,"name":"REUNIÃO AGENDADA - DEFESA","total":16,"entered_today":0,"entered_week":0,"entered_month":4},
+    {"order":8,"name":"NÃO COMPARECEU À REUNIÃO","total":69,"entered_today":0,"entered_week":1,"entered_month":9},
+    {"order":9,"name":"COMPARECEU - AGUARDANDO FECHAMENTO","total":120,"entered_today":0,"entered_week":0,"entered_month":9},
+    {"order":10,"name":"CLIENTES","total":2,"entered_today":0,"entered_week":0,"entered_month":0},
+    {"order":11,"name":"CONTRATO ASSINADO","total":72,"entered_today":0,"entered_week":1,"entered_month":7},
+    {"order":12,"name":"CONTRATO ASSINADO - ASSESSORIA","total":12,"entered_today":0,"entered_week":0,"entered_month":1},
+    {"order":13,"name":"CONTRATO ASSINADO - DEFESA","total":10,"entered_today":0,"entered_week":0,"entered_month":0},
+    {"order":14,"name":"LEAD DESQUALIFICADO","total":58,"entered_today":0,"entered_week":3,"entered_month":11},
+    {"order":15,"name":"CONTATO ENCERRADO - RECUSOU","total":11,"entered_today":0,"entered_week":0,"entered_month":0},
+    {"order":16,"name":"MENSAGENS COM ERRO","total":0,"entered_today":0,"entered_week":0,"entered_month":0}
+  ]
+}

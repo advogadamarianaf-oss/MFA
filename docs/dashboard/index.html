@@ -159,6 +159,19 @@ tr:hover td{background:rgba(79,140,255,.04)}
 .rank-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:.65rem;font-weight:700;color:#fff}
 .rank-1{background:var(--yellow)}.rank-2{background:var(--accent)}.rank-3{background:var(--purple)}.rank-n{background:var(--border);color:var(--text2)}
 .bar-inline{height:8px;border-radius:4px;display:inline-block;vertical-align:middle;margin-left:6px}
+
+/* CRM stage list */
+.crm-stage{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);transition:.15s}
+.crm-stage:last-child{border-bottom:none}
+.crm-stage:hover{background:rgba(79,140,255,.04)}
+.crm-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;flex-shrink:0}
+.crm-name{flex:1;font-size:.78rem;font-weight:500;min-width:0}
+.crm-count{font-size:1rem;font-weight:700;min-width:50px;text-align:right}
+.crm-pct{font-size:.7rem;color:var(--text2);min-width:42px;text-align:right}
+.crm-bar-bg{flex:0 0 120px;height:10px;background:var(--card2);border-radius:5px;overflow:hidden}
+.crm-bar-fill{height:100%;border-radius:5px;transition:width .4s}
+.crm-snapshot-info{font-size:.72rem;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.crm-snapshot-info .dot-small{width:6px;height:6px;border-radius:50%;background:var(--yellow);display:inline-block}
 </style>
 </head>
 <body>
@@ -173,6 +186,7 @@ tr:hover td{background:rgba(79,140,255,.04)}
       <button class="tab-btn" data-tab="semanal" onclick="switchTab('semanal')">Semanal</button>
       <button class="tab-btn" data-tab="mensal" onclick="switchTab('mensal')">Mensal</button>
       <button class="tab-btn" data-tab="insights" onclick="switchTab('insights')">Insights</button>
+      <button class="tab-btn" data-tab="comercial" onclick="switchTab('comercial')">Comercial</button>
     </div>
   </div>
   <div class="navbar-right">
@@ -194,6 +208,7 @@ tr:hover td{background:rgba(79,140,255,.04)}
   <button class="sidebar-tab" data-tab="semanal" onclick="switchTab('semanal');closeSidebar()">Semanal</button>
   <button class="sidebar-tab" data-tab="mensal" onclick="switchTab('mensal');closeSidebar()">Mensal</button>
   <button class="sidebar-tab" data-tab="insights" onclick="switchTab('insights');closeSidebar()">Insights</button>
+  <button class="sidebar-tab" data-tab="comercial" onclick="switchTab('comercial');closeSidebar()">Comercial</button>
 </div>
 
 <div class="container">
@@ -294,6 +309,30 @@ tr:hover td{background:rgba(79,140,255,.04)}
     </div>
   </div>
 
+  <!-- Tab: Comercial (CRM) -->
+  <div class="tab-content" id="tab-comercial">
+    <div class="metric-row" id="crm-metrics"></div>
+    <div class="charts-grid">
+      <div class="chart-card full">
+        <h3>Distribuicao por Etapa do CRM <span class="badge">COMERCIAL API OFICIAL</span></h3>
+        <div class="crm-snapshot-info" id="crm-updated"></div>
+        <div id="crm-stages"></div>
+      </div>
+      <div class="chart-card">
+        <h3>Funil CRM</h3>
+        <div class="funnel" id="crm-funnel"></div>
+      </div>
+      <div class="chart-card">
+        <h3>Distribuicao Visual</h3>
+        <div class="chart-wrap small"><canvas id="chartCrmDist"></canvas></div>
+      </div>
+      <div class="chart-card full">
+        <h3>Leads por Grupo de Etapas</h3>
+        <div class="chart-wrap"><canvas id="chartCrmGroups"></canvas></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Tab: Mensal -->
   <div class="tab-content" id="tab-mensal">
     <div class="charts-grid">
@@ -332,7 +371,8 @@ var DATA = {
   mensal: null,
   investSem: null,
   leadRows: null, // combined leads from all tabs
-  metaRows: null  // parsed META CSV rows with campaign/creative/hour
+  metaRows: null, // parsed META CSV rows with campaign/creative/hour
+  crmData: null   // CRM board snapshot from Atende Direito
 };
 var currentTab = 'diario';
 
@@ -626,6 +666,12 @@ async function loadAllData() {
     }
     DATA.metaRows = metaRows;
 
+    // Load CRM snapshot
+    try {
+      var crmResp = await fetch('crm_snapshot.json?v=' + Date.now());
+      DATA.crmData = await crmResp.json();
+    } catch(e) { console.warn('CRM snapshot not loaded:', e); }
+
     renderAll();
   } catch(e) {
     console.error(e);
@@ -652,6 +698,7 @@ function renderAll() {
   renderReceitaInvest();
   renderRoiMensal();
   renderInsights();
+  renderComercial();
 }
 
 /* ── KPIs ── */
@@ -1543,6 +1590,147 @@ function renderTopCriativos() {
   document.getElementById('tabelaCriativos').innerHTML = html;
 }
 
+/* ── Comercial (CRM) Tab ── */
+function renderComercial() {
+  var crm = DATA.crmData;
+  if (!crm) return;
+  var cols = crm.columns;
+  var total = crm.total;
+
+  // Grouped metrics
+  var entradaTotal = cols[0].total + cols[1].total + cols[2].total + cols[3].total; // stages 1-4
+  var reunioesAgendadas = cols[4].total + cols[5].total + cols[6].total; // stages 5-7
+  var reunioesTotal = reunioesAgendadas + cols[7].total + cols[8].total; // 5-9 (all meeting stages)
+  var compareceram = cols[8].total; // stage 9
+  var naoCompareceu = cols[7].total; // stage 8
+  var fechados = cols[9].total + cols[10].total + cols[11].total + cols[12].total; // stages 10-13
+  var perdidos = cols[13].total + cols[14].total; // stages 14-15
+
+  var txAgendamento = entradaTotal > 0 ? reunioesTotal / (entradaTotal + reunioesTotal) : 0;
+  var txComparecimento = (compareceram + naoCompareceu) > 0 ? compareceram / (compareceram + naoCompareceu) : 0;
+  var txFechamento = compareceram > 0 ? fechados / compareceram : 0;
+  var txConversaoGeral = total > 0 ? fechados / total : 0;
+
+  // KPI cards
+  var html = '';
+  html += '<div class="metric-card accent"><div class="m-label">Total no CRM</div><div class="m-value">' + fmt(total) + '</div><div class="m-detail">leads no Comercial</div></div>';
+  html += '<div class="metric-card purple"><div class="m-label">Reunioes Agendadas</div><div class="m-value">' + fmt(reunioesAgendadas) + '</div><div class="m-detail">aguardando reuniao</div></div>';
+  html += '<div class="metric-card green"><div class="m-label">Contratos Assinados</div><div class="m-value">' + fmt(fechados) + '</div><div class="m-detail">' + fmtPct(txConversaoGeral) + ' do total</div></div>';
+  html += '<div class="metric-card yellow"><div class="m-label">Tx Comparecimento</div><div class="m-value">' + fmtPct(txComparecimento) + '</div><div class="m-detail">' + fmt(compareceram) + ' de ' + fmt(compareceram + naoCompareceu) + '</div></div>';
+  html += '<div class="metric-card orange"><div class="m-label">Tx Fechamento</div><div class="m-value">' + fmtPct(txFechamento) + '</div><div class="m-detail">' + fmt(fechados) + ' de ' + fmt(compareceram) + ' que compareceram</div></div>';
+  html += '<div class="metric-card red"><div class="m-label">Perdidos / Desqualificados</div><div class="m-value">' + fmt(perdidos) + '</div><div class="m-detail">' + fmtPct(total > 0 ? perdidos / total : 0) + ' do total</div></div>';
+  document.getElementById('crm-metrics').innerHTML = html;
+
+  // Snapshot timestamp
+  var updatedAt = crm.updated_at ? new Date(crm.updated_at).toLocaleString('pt-BR') : 'desconhecido';
+  document.getElementById('crm-updated').innerHTML = '<span class="dot-small"></span> Snapshot de ' + updatedAt;
+
+  // Stage list
+  var stageColors = ['#4f8cff','#6c5ce7','#b197fc','#ffc048','#00d68f','#00d68f','#00d68f','#ff6b6b','#ff922b','#4f8cff','#00d68f','#00d68f','#00d68f','#ff6b6b','#ff6b6b','#9ca3b5'];
+  var maxStage = 0;
+  for (var s = 0; s < cols.length; s++) if (cols[s].total > maxStage) maxStage = cols[s].total;
+
+  var stagesHtml = '';
+  for (var i = 0; i < cols.length; i++) {
+    var c = cols[i];
+    var pct = total > 0 ? (c.total / total * 100) : 0;
+    var barW = maxStage > 0 ? (c.total / maxStage * 100) : 0;
+    var color = stageColors[i] || '#9ca3b5';
+    stagesHtml += '<div class="crm-stage">';
+    stagesHtml += '<div class="crm-num" style="background:' + color + '">' + c.order + '</div>';
+    stagesHtml += '<div class="crm-name">' + c.name + '</div>';
+    stagesHtml += '<div class="crm-count" style="color:' + color + '">' + fmt(c.total) + '</div>';
+    stagesHtml += '<div class="crm-pct">' + pct.toFixed(1).replace('.', ',') + '%</div>';
+    stagesHtml += '<div class="crm-bar-bg"><div class="crm-bar-fill" style="width:' + barW.toFixed(0) + '%;background:' + color + '"></div></div>';
+    stagesHtml += '</div>';
+  }
+  document.getElementById('crm-stages').innerHTML = stagesHtml;
+
+  // CRM Funnel (grouped)
+  var funnelData = [
+    { label: 'Entrada', value: entradaTotal + reunioesTotal + compareceram + fechados + perdidos, color: 'var(--accent)' },
+    { label: 'Reunioes Agendadas', value: reunioesAgendadas, color: 'var(--purple)' },
+    { label: 'Compareceram', value: compareceram, color: 'var(--yellow)' },
+    { label: 'Fecharam', value: fechados, color: 'var(--green)' }
+  ];
+  var maxFunnel = funnelData[0].value || 1;
+  var funnelHtml = '';
+  for (var fi = 0; fi < funnelData.length; fi++) {
+    var f = funnelData[fi];
+    var fPct = (f.value / maxFunnel) * 100;
+    var fPrevVal = fi > 0 ? funnelData[fi - 1].value : f.value;
+    var fConvPct = fPrevVal > 0 ? ((f.value / fPrevVal) * 100).toFixed(1) : '0.0';
+    funnelHtml += '<div class="funnel-step">';
+    funnelHtml += '<div class="funnel-bar" style="width:' + Math.max(fPct, 12) + '%;background:' + f.color + '">' + fmt(f.value) + '</div>';
+    funnelHtml += '<div class="funnel-info"><strong>' + f.label + '</strong><br>' + fConvPct.replace('.', ',') + '% da etapa anterior</div>';
+    funnelHtml += '</div>';
+  }
+  document.getElementById('crm-funnel').innerHTML = funnelHtml;
+
+  // Distribution doughnut
+  var groupNames = ['Entrada/Follow-up', 'Atendimento IA', 'Reunioes', 'Compareceu', 'Fechados', 'Perdidos', 'Erro'];
+  var groupValues = [
+    cols[0].total + cols[1].total,
+    cols[2].total + cols[3].total,
+    cols[4].total + cols[5].total + cols[6].total,
+    cols[7].total + cols[8].total,
+    cols[9].total + cols[10].total + cols[11].total + cols[12].total,
+    cols[13].total + cols[14].total,
+    cols[15].total
+  ];
+  var groupColors = ['#4f8cff', '#b197fc', '#6c5ce7', '#ffc048', '#00d68f', '#ff6b6b', '#9ca3b5'];
+
+  // Filter out zero groups
+  var filteredNames = [], filteredValues = [], filteredColors = [];
+  for (var g = 0; g < groupValues.length; g++) {
+    if (groupValues[g] > 0) {
+      filteredNames.push(groupNames[g]);
+      filteredValues.push(groupValues[g]);
+      filteredColors.push(groupColors[g]);
+    }
+  }
+
+  destroyChart('crmDist');
+  var ctx1 = document.getElementById('chartCrmDist').getContext('2d');
+  charts.crmDist = new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+      labels: filteredNames,
+      datasets: [{ data: filteredValues, backgroundColor: filteredColors, borderWidth: 0 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { padding: 10, font: { size: 11 } } },
+        tooltip: { callbacks: { label: function(c) { return c.label + ': ' + fmt(c.raw) + ' (' + (c.raw / total * 100).toFixed(1).replace('.', ',') + '%)'; } } }
+      }
+    }
+  });
+
+  // Horizontal bar chart by group
+  destroyChart('crmGroups');
+  var ctx2 = document.getElementById('chartCrmGroups').getContext('2d');
+  charts.crmGroups = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: filteredNames,
+      datasets: [{ label: 'Leads', data: filteredValues, backgroundColor: filteredColors, borderRadius: 6, barPercentage: .6 }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: function(c) { return fmt(c.raw) + ' leads (' + (c.raw / total * 100).toFixed(1).replace('.', ',') + '%)'; } } }
+      },
+      scales: {
+        x: { beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+}
+
 /* ── Reload wrapper ── */
 function reloadAll() {
   // Clear cache to force re-fetch
@@ -1552,6 +1740,7 @@ function reloadAll() {
   DATA.investSem = null;
   DATA.leadRows = null;
   DATA.metaRows = null;
+  DATA.crmData = null;
   loadAllData();
 }
 window.reloadAll = reloadAll;
