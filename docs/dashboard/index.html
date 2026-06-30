@@ -1616,8 +1616,6 @@ function renderComercial() {
   html += '<div class="metric-card accent"><div class="m-label">Total no CRM</div><div class="m-value">' + fmt(total) + '</div><div class="m-detail">leads no Comercial</div></div>';
   html += '<div class="metric-card purple"><div class="m-label">Reunioes Agendadas</div><div class="m-value">' + fmt(reunioesAgendadas) + '</div><div class="m-detail">aguardando reuniao</div></div>';
   html += '<div class="metric-card green"><div class="m-label">Contratos Assinados</div><div class="m-value">' + fmt(fechados) + '</div><div class="m-detail">' + fmtPct(txConversaoGeral) + ' do total</div></div>';
-  html += '<div class="metric-card yellow"><div class="m-label">Tx Comparecimento</div><div class="m-value">' + fmtPct(txComparecimento) + '</div><div class="m-detail">' + fmt(compareceram) + ' de ' + fmt(compareceram + naoCompareceu) + '</div></div>';
-  html += '<div class="metric-card orange"><div class="m-label">Tx Fechamento</div><div class="m-value">' + fmtPct(txFechamento) + '</div><div class="m-detail">' + fmt(fechados) + ' de ' + fmt(compareceram) + ' que compareceram</div></div>';
   html += '<div class="metric-card red"><div class="m-label">Perdidos / Desqualificados</div><div class="m-value">' + fmt(perdidos) + '</div><div class="m-detail">' + fmtPct(total > 0 ? perdidos / total : 0) + ' do total</div></div>';
   document.getElementById('crm-metrics').innerHTML = html;
 
