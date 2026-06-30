@@ -1666,18 +1666,10 @@ function renderComercial() {
   }
   document.getElementById('crm-funnel').innerHTML = funnelHtml;
 
-  // Distribution doughnut
-  var groupNames = ['Entrada/Follow-up', 'Atendimento IA', 'Reunioes', 'Compareceu', 'Fechados', 'Perdidos', 'Erro'];
-  var groupValues = [
-    cols[0].total + cols[1].total,
-    cols[2].total + cols[3].total,
-    cols[4].total + cols[5].total + cols[6].total,
-    cols[7].total + cols[8].total,
-    cols[9].total + cols[10].total + cols[11].total + cols[12].total,
-    cols[13].total + cols[14].total,
-    cols[15].total
-  ];
-  var groupColors = ['#4f8cff', '#b197fc', '#6c5ce7', '#ffc048', '#00d68f', '#ff6b6b', '#9ca3b5'];
+  // Distribution doughnut + bar (accumulated funnel numbers)
+  var groupNames = ['Entraram no Comercial', 'Chegaram a Reuniao', 'Compareceram', 'Fecharam Contrato', 'Perdidos'];
+  var groupValues = [total, reunioesAcum, compareceramAcum, fechados, perdidos];
+  var groupColors = ['#4f8cff', '#6c5ce7', '#ffc048', '#00d68f', '#ff6b6b'];
 
   // Filter out zero groups
   var filteredNames = [], filteredValues = [], filteredColors = [];
