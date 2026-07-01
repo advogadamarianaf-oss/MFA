@@ -9,8 +9,6 @@
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:'Segoe UI',system-ui,sans-serif; background:#0f172a; color:#e2e8f0; min-height:100vh; }
-
-  /* Navbar */
   .navbar { background:linear-gradient(135deg,#1e293b,#0c4a6e); border-bottom:1px solid #334155; display:flex; align-items:center; gap:16px; padding:0 24px; height:56px; }
   .navbar img { height:36px; filter:brightness(0) invert(1); }
   .navbar .nav-title { font-size:1.1rem; font-weight:700; letter-spacing:.5px; flex:1; }
@@ -26,13 +24,9 @@
   .dot-ok { background:#34d399; }
   .dot-err { background:#f87171; }
   .last-update { font-size:0.7rem; color:#94a3b8; }
-
-  /* Content */
   .content { padding:24px; }
   .header { text-align:center; margin-bottom:24px; }
   .header p { color:#94a3b8; font-size:0.9rem; }
-
-  /* Cards */
   .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:28px; }
   .card { background:#1e293b; border-radius:12px; padding:18px; border:1px solid #334155; transition:transform .15s; }
   .card:hover { transform:translateY(-2px); }
@@ -43,14 +37,10 @@
   .card.green { border-color:#34d399; }
   .card.amber { border-color:#fbbf24; }
   .card.red { border-color:#f87171; }
-
-  /* Charts */
   .charts { display:grid; grid-template-columns:repeat(auto-fit,minmax(380px,1fr)); gap:18px; margin-bottom:28px; }
   .chart-box { background:#1e293b; border-radius:12px; padding:20px; border:1px solid #334155; }
   .chart-box h3 { font-size:0.95rem; color:#cbd5e1; margin-bottom:14px; }
   canvas { max-height:280px; }
-
-  /* Table */
   .table-box { background:#1e293b; border-radius:12px; padding:20px; border:1px solid #334155; margin-bottom:28px; overflow-x:auto; }
   .table-box h3 { font-size:0.95rem; color:#cbd5e1; margin-bottom:14px; }
   table { width:100%; border-collapse:collapse; font-size:0.85rem; }
@@ -61,417 +51,132 @@
   .badge-group { background:#1e3a5f; color:#38bdf8; }
   .badge-individual { background:#1a3333; color:#34d399; }
   .badge-unread { background:#7f1d1d; color:#fca5a5; }
-
-  /* Users grid */
   .users-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
   .user-card { background:#0f172a; border-radius:8px; padding:12px; display:flex; align-items:center; gap:10px; }
   .user-dot { width:10px; height:10px; border-radius:50%; }
-
-  /* Loading overlay */
   .loading-overlay { position:fixed; inset:0; background:rgba(15,23,42,0.85); display:flex; align-items:center; justify-content:center; z-index:100; }
   .loading-overlay .spinner { text-align:center; }
   .loading-overlay .spinner-ring { width:48px; height:48px; border:4px solid #334155; border-top-color:#38bdf8; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 16px; }
   .loading-overlay p { color:#94a3b8; font-size:0.9rem; }
-
   .footer { text-align:center; color:#475569; font-size:0.7rem; margin-top:24px; padding-bottom:16px; }
-
-  /* Auto-refresh banner */
   .auto-refresh-banner { background:#1e3a5f; color:#38bdf8; text-align:center; padding:6px; font-size:0.75rem; display:none; }
 </style>
 </head>
 <body>
-
-<div class="auto-refresh-banner" id="autoRefreshBanner">
-  &#x23F0; Atualização automática agendada para 18:00
-</div>
-
+<div class="auto-refresh-banner" id="autoRefreshBanner">⏰ Atualização automática agendada para 18:00</div>
 <nav class="navbar">
   <img src="../assets/logo-full.png" alt="Friedrich Advocacia">
-  <div class="nav-title">DASHBOARD DE ATENDIMENTO <span>&#8212; Digisac</span></div>
+  <div class="nav-title">DASHBOARD DE ATENDIMENTO <span>— Digisac</span></div>
   <div class="nav-actions">
-    <span class="last-update" id="lastUpdate">&#8212;</span>
+    <span class="last-update" id="lastUpdate">—</span>
     <span class="status-dot dot-ok" id="statusDot"></span>
-    <button class="btn-refresh" id="btnRefresh" onclick="refreshDashboard()">
-      <span class="icon">&#x21bb;</span> Atualizar
-    </button>
+    <button class="btn-refresh" id="btnRefresh" onclick="refreshDashboard()"><span class="icon">↻</span> Atualizar</button>
   </div>
 </nav>
-
 <div class="content">
-  <div class="header">
-    <p id="headerSub">Friedrich Advocacia Médica &amp; Odontológica</p>
-  </div>
-
+  <div class="header"><p id="headerSub">Friedrich Advocacia Médica &amp; Odontológica</p></div>
   <div class="cards" id="cardsContainer">
-    <div class="card blue"><div class="label">Mensagens Hoje</div><div class="value" id="vMsgs">&#8212;</div><div class="sub" id="sMsgs">carregando...</div></div>
-    <div class="card green"><div class="label">Conversas Ativas</div><div class="value" id="vConversas">&#8212;</div><div class="sub" id="sConversas">&#8212;</div></div>
-    <div class="card amber"><div class="label">Não Lidas</div><div class="value" id="vUnread">&#8212;</div><div class="sub">mensagens pendentes</div></div>
-    <div class="card"><div class="label">Tempo Médio Resposta</div><div class="value" id="vTempo" style="font-size:1.4rem">&#8212;</div><div class="sub">entre receber e responder</div></div>
-    <div class="card"><div class="label">Total de Contatos</div><div class="value" id="vContatos">&#8212;</div><div class="sub">na base do Digisac</div></div>
-    <div class="card"><div class="label">Canal</div><div class="value" id="vCanal" style="font-size:1.2rem">&#8212;</div><div class="sub" id="sCanal">&#8212;</div></div>
+    <div class="card blue"><div class="label">Mensagens Hoje</div><div class="value" id="vMsgs">—</div><div class="sub" id="sMsgs">carregando...</div></div>
+    <div class="card green"><div class="label">Conversas Ativas</div><div class="value" id="vConversas">—</div><div class="sub" id="sConversas">—</div></div>
+    <div class="card amber"><div class="label">Não Lidas</div><div class="value" id="vUnread">—</div><div class="sub">mensagens pendentes</div></div>
+    <div class="card"><div class="label">Tempo Médio Resposta</div><div class="value" id="vTempo" style="font-size:1.4rem">—</div><div class="sub">entre receber e responder</div></div>
+    <div class="card"><div class="label">Total de Contatos</div><div class="value" id="vContatos">—</div><div class="sub">na base do Digisac</div></div>
+    <div class="card"><div class="label">Canal</div><div class="value" id="vCanal" style="font-size:1.2rem">—</div><div class="sub" id="sCanal">—</div></div>
   </div>
-
   <div class="charts">
-    <div class="chart-box">
-      <h3>Fluxo de Mensagens por Hora (BRT)</h3>
-      <canvas id="chartHours"></canvas>
-    </div>
-    <div class="chart-box">
-      <h3>Top Conversas do Dia</h3>
-      <canvas id="chartContacts"></canvas>
-    </div>
+    <div class="chart-box"><h3>Fluxo de Mensagens por Hora (BRT)</h3><canvas id="chartHours"></canvas></div>
+    <div class="chart-box"><h3>Top Conversas do Dia</h3><canvas id="chartContacts"></canvas></div>
   </div>
-
   <div class="table-box">
     <h3>Detalhamento por Conversa</h3>
-    <table>
-      <thead>
-        <tr><th>Contato</th><th>Tipo</th><th>Recebidas</th><th>Enviadas</th><th>Total</th><th>Não Lidas</th></tr>
-      </thead>
-      <tbody id="tableBody">
-        <tr><td colspan="6" style="text-align:center;color:#94a3b8">Carregando dados...</td></tr>
-      </tbody>
-    </table>
+    <table><thead><tr><th>Contato</th><th>Tipo</th><th>Recebidas</th><th>Enviadas</th><th>Total</th><th>Não Lidas</th></tr></thead>
+    <tbody id="tableBody"><tr><td colspan="6" style="text-align:center;color:#94a3b8">Carregando dados...</td></tr></tbody></table>
   </div>
-
-  <div class="table-box">
-    <h3>Equipe</h3>
-    <div class="users-grid" id="usersGrid">
-      <div style="color:#94a3b8;font-size:0.85rem">Carregando...</div>
-    </div>
-  </div>
-
-  <div class="footer" id="footerText">
-    Dashboard dinâmico · Dados via API Digisac em tempo real
-  </div>
+  <div class="table-box"><h3>Equipe</h3><div class="users-grid" id="usersGrid"><div style="color:#94a3b8;font-size:0.85rem">Carregando...</div></div></div>
+  <div class="footer" id="footerText">Dashboard dinâmico · Dados via API Digisac em tempo real</div>
 </div>
-
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner">
-    <div class="spinner-ring"></div>
-    <p>Buscando dados do Digisac...</p>
-  </div>
-</div>
-
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"><div class="spinner-ring"></div><p>Buscando dados do Digisac...</p></div></div>
 <script>
-// Config
-const API_KEY = 'cad9aefe07bfcc14e3bdb4b89d7b998f8c2e06f2';
-const BASE_URL = 'https://friedrichmagroadv.digisac.co/api/v1';
-const HEADERS = { 'Authorization': 'Bearer ' + API_KEY, 'Content-Type': 'application/json' };
-const BRT_OFFSET = -3;
+var API_KEY='cad9aefe07bfcc14e3bdb4b89d7b998f8c2e06f2';
+var BASE_URL='https://friedrichmagroadv.digisac.co/api/v1';
+var HEADERS={'Authorization':'Bearer '+API_KEY,'Content-Type':'application/json'};
+var BRT_OFFSET=-3;
+var chartHours=null,chartContacts=null;
 
-var chartHours = null;
-var chartContacts = null;
+function todayISO(){var n=new Date(),b=new Date(n.getTime()+(BRT_OFFSET*60+n.getTimezoneOffset())*60000);return b.getFullYear()+'-'+String(b.getMonth()+1).padStart(2,'0')+'-'+String(b.getDate()).padStart(2,'0')+'T00:00:00.000Z';}
+function nowBRT(){var n=new Date();return new Date(n.getTime()+(BRT_OFFSET*60+n.getTimezoneOffset())*60000);}
+function formatTime(s){if(!s||s<=0)return'N/A';return Math.floor(s/60)+'m '+Math.floor(s%60)+'s';}
 
-function todayISO() {
-  var now = new Date();
-  var brt = new Date(now.getTime() + (BRT_OFFSET * 60 + now.getTimezoneOffset()) * 60000);
-  var y = brt.getFullYear(), m = String(brt.getMonth()+1).padStart(2,'0'), d = String(brt.getDate()).padStart(2,'0');
-  return y + '-' + m + '-' + d + 'T00:00:00.000Z';
-}
-
-function tomorrowISO() {
-  var t = new Date(todayISO());
-  t.setUTCDate(t.getUTCDate() + 1);
-  return t.toISOString();
-}
-
-function nowBRT() {
-  var now = new Date();
-  return new Date(now.getTime() + (BRT_OFFSET * 60 + now.getTimezoneOffset()) * 60000);
-}
-
-function formatTime(sec) {
-  if (!sec || sec <= 0) return 'N/A';
-  var m = Math.floor(sec / 60), s = Math.floor(sec % 60);
-  return m + 'm ' + s + 's';
-}
-
-async function apiGet(path, extra) {
-  extra = extra || '';
-  var allData = [], page = 1;
-  while (true) {
-    try {
-      var r = await fetch(BASE_URL + '/' + path + '?page=' + page + extra, { headers: HEADERS });
-      if (!r.ok) break;
-      var body = await r.json();
-      if (body && body.data && Array.isArray(body.data)) {
-        allData = allData.concat(body.data);
-        if (allData.length >= (body.total || body.totalCount || allData.length)) break;
-      } else if (Array.isArray(body)) {
-        allData = allData.concat(body);
-        if (body.length === 0) break;
-      } else { allData.push(body); break; }
-    } catch(e) { break; }
-    page++;
-    if (page > 200) break;
-  }
+async function apiGet(path,extra){
+  extra=extra||'';var allData=[],page=1;
+  while(true){try{
+    var r=await fetch(BASE_URL+'/'+path+'?page='+page+extra,{headers:HEADERS});
+    if(!r.ok)break;var body=await r.json();
+    if(body&&body.data&&Array.isArray(body.data)){allData=allData.concat(body.data);if(allData.length>=(body.total||body.totalCount||allData.length))break;}
+    else if(Array.isArray(body)){allData=allData.concat(body);if(body.length===0)break;}
+    else{allData.push(body);break;}
+  }catch(e){break;}page++;if(page>200)break;}
   return allData;
 }
 
-async function fetchTodayMessages() {
-  var today = todayISO().substring(0, 10);
-  var all = [], page = 1;
-  while (page <= 100) {
-    try {
-      var r = await fetch(BASE_URL + '/messages?page=' + page + '&order[0][0]=createdAt&order[0][1]=DESC', { headers: HEADERS });
-      if (!r.ok) break;
-      var body = await r.json();
-      var msgs = body.data || body;
-      if (!msgs.length) break;
-      var done = false;
-      for (var i = 0; i < msgs.length; i++) {
-        if ((msgs[i].createdAt || '').substring(0, 10) >= today) all.push(msgs[i]);
-        else { done = true; break; }
-      }
-      if (done) break;
-    } catch(e) { break; }
-    page++;
-  }
+async function fetchTodayMessages(){
+  var today=todayISO().substring(0,10);var all=[],page=1;
+  while(page<=100){try{
+    var r=await fetch(BASE_URL+'/messages?page='+page+'&order[0][0]=createdAt&order[0][1]=DESC',{headers:HEADERS});
+    if(!r.ok)break;var body=await r.json();var msgs=body.data||body;if(!msgs.length)break;
+    var done=false;
+    for(var i=0;i<msgs.length;i++){if((msgs[i].createdAt||'').substring(0,10)>=today)all.push(msgs[i]);else{done=true;break;}}
+    if(done)break;
+  }catch(e){break;}page++;}
   return all;
 }
 
-async function fetchAllData() {
-  var msgPromise = fetchTodayMessages();
-  var otherPromise = Promise.all([
-    apiGet('users', ''),
-    apiGet('services', ''),
-  ]);
-  var messages = await msgPromise;
-  var others = await otherPromise;
-  var totalContacts = 0;
-  try {
-    var r = await fetch(BASE_URL + '/contacts?page=1', { headers: HEADERS });
-    var body = await r.json();
-    totalContacts = body.total || body.totalCount || (body.data ? body.data.length : 0);
-  } catch(e) {}
-
-  return {
-    messages: messages,
-    users: others[0],
-    services: others[1],
-    ticketsOpen: [],
-    totalContacts: totalContacts
-  };
+async function fetchAllData(){
+  var msgP=fetchTodayMessages();
+  var otherP=Promise.all([apiGet('users',''),apiGet('services','')]);
+  var messages=await msgP;var others=await otherP;var totalContacts=0;
+  try{var r=await fetch(BASE_URL+'/contacts?page=1',{headers:HEADERS});var b=await r.json();totalContacts=b.total||b.totalCount||(b.data?b.data.length:0);}catch(e){}
+  return{messages:messages,users:others[0],services:others[1],ticketsOpen:[],totalContacts:totalContacts};
 }
 
-function processData(data) {
-  var msgs = data.messages;
-  var received = msgs.filter(function(m) { return !m.isFromMe; });
-  var sent = msgs.filter(function(m) { return m.isFromMe; });
-
-  // Por hora (BRT)
-  var byHour = new Array(24).fill(0);
-  msgs.forEach(function(m) {
-    try {
-      var d = new Date(m.createdAt || m.timestamp);
-      var brtH = (d.getUTCHours() + 24 + BRT_OFFSET) % 24;
-      byHour[brtH]++;
-    } catch(e) {}
-  });
-
-  // Agrupar por conversa
-  var convMap = {};
-  var totalUnread = 0;
-
-  msgs.forEach(function(m) {
-    var key = m.contactId || m.ticketId || 'other';
-    if (!convMap[key]) {
-      convMap[key] = {
-        name: (m.contact && m.contact.name) || m.contactName || key,
-        isGroup: m.isGroup || (m.contact && m.contact.isGroup) || false,
-        recv: 0, sent: 0, unread: 0
-      };
-    }
-    if (m.isFromMe) convMap[key].sent++;
-    else convMap[key].recv++;
-    if (!m.isRead && !m.isFromMe) {
-      convMap[key].unread++;
-      totalUnread++;
-    }
-  });
-
-  var conversations = Object.values(convMap)
-    .map(function(c) { return Object.assign({}, c, { total: c.recv + c.sent }); })
-    .sort(function(a,b) { return b.total - a.total; });
-
-  // Tempo medio de resposta
-  var contactMsgs = {};
-  msgs.forEach(function(m) {
-    var cid = m.contactId;
-    if (!cid) return;
-    if (!contactMsgs[cid]) contactMsgs[cid] = [];
-    contactMsgs[cid].push(m);
-  });
-
-  var respTimes = [];
-  Object.values(contactMsgs).forEach(function(cm) {
-    cm.sort(function(a,b) { return (a.createdAt||'').localeCompare(b.createdAt||''); });
-    for (var i = 0; i < cm.length - 1; i++) {
-      if (!cm[i].isFromMe && cm[i+1].isFromMe) {
-        var t1 = new Date(cm[i].createdAt || cm[i].timestamp);
-        var t2 = new Date(cm[i+1].createdAt || cm[i+1].timestamp);
-        var diff = (t2 - t1) / 1000;
-        if (diff > 0 && diff < 86400) respTimes.push(diff);
-      }
-    }
-  });
-  var avgResp = respTimes.length ? respTimes.reduce(function(a,b){return a+b;},0) / respTimes.length : 0;
-
-  // Canais
-  var serviceMap = {};
-  data.services.forEach(function(s) { serviceMap[s.id] = s.name || s.type || 'Canal'; });
-  var channels = {};
-  msgs.forEach(function(m) {
-    var name = serviceMap[m.serviceId] || 'Outro';
-    channels[name] = (channels[name]||0) + 1;
-  });
-
-  var individuals = conversations.filter(function(c){return !c.isGroup;}).length;
-  var groups = conversations.filter(function(c){return c.isGroup;}).length;
-
-  return {
-    totalMsgs: msgs.length,
-    received: received.length,
-    sent: sent.length,
-    conversations: conversations,
-    convCount: conversations.length,
-    individuals: individuals,
-    groups: groups,
-    totalUnread: totalUnread,
-    avgResp: avgResp,
-    totalContacts: data.totalContacts,
-    channels: channels,
-    byHour: byHour,
-    users: data.users,
-    ticketsOpen: data.ticketsOpen.length,
-  };
+function processData(data){
+  var msgs=data.messages,recv=msgs.filter(function(m){return!m.isFromMe}),sent=msgs.filter(function(m){return m.isFromMe});
+  var byHour=new Array(24).fill(0);
+  msgs.forEach(function(m){try{var d=new Date(m.createdAt||m.timestamp);byHour[(d.getUTCHours()+24+BRT_OFFSET)%24]++;}catch(e){}});
+  var convMap={},totalUnread=0;
+  msgs.forEach(function(m){var k=m.contactId||m.ticketId||'other';if(!convMap[k])convMap[k]={name:(m.contact&&m.contact.name)||m.contactName||k,isGroup:m.isGroup||(m.contact&&m.contact.isGroup)||false,recv:0,sent:0,unread:0};if(m.isFromMe)convMap[k].sent++;else convMap[k].recv++;if(!m.isRead&&!m.isFromMe){convMap[k].unread++;totalUnread++;}});
+  var conversations=Object.values(convMap).map(function(c){return Object.assign({},c,{total:c.recv+c.sent})}).sort(function(a,b){return b.total-a.total});
+  var contactMsgs={};msgs.forEach(function(m){var c=m.contactId;if(!c)return;if(!contactMsgs[c])contactMsgs[c]=[];contactMsgs[c].push(m);});
+  var respTimes=[];Object.values(contactMsgs).forEach(function(cm){cm.sort(function(a,b){return(a.createdAt||'').localeCompare(b.createdAt||'')});for(var i=0;i<cm.length-1;i++){if(!cm[i].isFromMe&&cm[i+1].isFromMe){var d=(new Date(cm[i+1].createdAt||cm[i+1].timestamp)-new Date(cm[i].createdAt||cm[i].timestamp))/1000;if(d>0&&d<86400)respTimes.push(d);}}});
+  var avgResp=respTimes.length?respTimes.reduce(function(a,b){return a+b},0)/respTimes.length:0;
+  var svcMap={};data.services.forEach(function(s){svcMap[s.id]=s.name||s.type||'Canal'});var channels={};msgs.forEach(function(m){var n=svcMap[m.serviceId]||'Outro';channels[n]=(channels[n]||0)+1});
+  return{totalMsgs:msgs.length,received:recv.length,sent:sent.length,conversations:conversations,convCount:conversations.length,individuals:conversations.filter(function(c){return!c.isGroup}).length,groups:conversations.filter(function(c){return c.isGroup}).length,totalUnread:totalUnread,avgResp:avgResp,totalContacts:data.totalContacts,channels:channels,byHour:byHour,users:data.users,ticketsOpen:data.ticketsOpen.length};
 }
 
-function render(stats) {
-  var brt = nowBRT();
-  var dateStr = String(brt.getDate()).padStart(2,'0') + '/' + String(brt.getMonth()+1).padStart(2,'0') + '/' + brt.getFullYear();
-
-  document.title = 'Dashboard Digisac — ' + dateStr;
-  document.getElementById('headerSub').innerHTML = 'Friedrich Advocacia Médica &amp; Odontológica · ' + dateStr;
-
-  document.getElementById('vMsgs').textContent = stats.totalMsgs;
-  document.getElementById('sMsgs').textContent = stats.received + ' recebidas · ' + stats.sent + ' enviadas';
-  document.getElementById('vConversas').textContent = stats.convCount;
-  document.getElementById('sConversas').textContent = stats.individuals + ' individuais · ' + stats.groups + ' grupos';
-  document.getElementById('vUnread').textContent = stats.totalUnread;
-  document.getElementById('vTempo').textContent = formatTime(stats.avgResp);
-  document.getElementById('vContatos').textContent = stats.totalContacts;
-
-  var channelNames = Object.keys(stats.channels);
-  document.getElementById('vCanal').textContent = channelNames[0] || '—';
-  document.getElementById('sCanal').textContent = channelNames.length === 1 ? 'único canal conectado' : channelNames.length + ' canais';
-
-  // Chart: Mensagens por hora
-  if (chartHours) chartHours.destroy();
-  chartHours = new Chart(document.getElementById('chartHours'), {
-    type: 'bar',
-    data: {
-      labels: Array.from({length:24}, function(_,i){return i+'h';}),
-      datasets: [{ label:'Mensagens', data:stats.byHour, backgroundColor:'#38bdf8', borderRadius:6 }]
-    },
-    options: {
-      responsive:true,
-      plugins:{legend:{display:false}},
-      scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, ticks:{stepSize:5}} }
-    }
-  });
-
-  // Chart: Top conversas
-  var top8 = stats.conversations.slice(0, 8);
-  if (chartContacts) chartContacts.destroy();
-  chartContacts = new Chart(document.getElementById('chartContacts'), {
-    type: 'bar',
-    data: {
-      labels: top8.map(function(c){return c.name.length > 25 ? c.name.slice(0,22)+'...' : c.name;}),
-      datasets: [
-        { label:'Recebidas', data:top8.map(function(c){return c.recv;}), backgroundColor:'#818cf8', borderRadius:4 },
-        { label:'Enviadas', data:top8.map(function(c){return c.sent;}), backgroundColor:'#34d399', borderRadius:4 },
-      ]
-    },
-    options: {
-      responsive:true, indexAxis:'y',
-      plugins:{legend:{position:'top'}},
-      scales:{ x:{beginAtZero:true,stacked:true}, y:{stacked:true, ticks:{font:{size:11}}} }
-    }
-  });
-
-  // Tabela
-  var tbody = document.getElementById('tableBody');
-  if (stats.conversations.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94a3b8">Nenhuma conversa hoje</td></tr>';
-  } else {
-    tbody.innerHTML = stats.conversations.slice(0, 20).map(function(c) {
-      var typeBadge = c.isGroup
-        ? '<span class="badge badge-group">Grupo</span>'
-        : '<span class="badge badge-individual">Individual</span>';
-      var unreadBadge = c.unread > 0
-        ? '<span class="badge badge-unread">' + c.unread + '</span>'
-        : '0';
-      return '<tr><td>'+c.name+'</td><td>'+typeBadge+'</td><td>'+c.recv+'</td><td>'+c.sent+'</td><td><strong>'+c.total+'</strong></td><td>'+unreadBadge+'</td></tr>';
-    }).join('');
-  }
-
-  // Equipe
-  var grid = document.getElementById('usersGrid');
-  grid.innerHTML = stats.users.map(function(u) {
-    var status = u.status || 'offline';
-    var dotColor = status === 'online' ? '#34d399' : status === 'away' ? '#fbbf24' : '#64748b';
-    var statusLabel = status === 'online' ? 'Online' : status === 'away' ? 'Ausente' : 'Offline';
-    return '<div class="user-card"><div class="user-dot" style="background:'+dotColor+'"></div><div><strong>'+(u.name||'Sem nome')+'</strong><br><span style="font-size:0.75rem;color:#94a3b8">'+statusLabel+'</span></div></div>';
-  }).join('');
-
-  // Footer
-  var now = nowBRT();
-  var timeStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('footerText').textContent = 'Dados via API Digisac · Última atualização: ' + dateStr + ' às ' + timeStr;
-  document.getElementById('lastUpdate').textContent = 'Atualizado ' + timeStr;
+function render(stats){
+  var brt=nowBRT(),ds=String(brt.getDate()).padStart(2,'0')+'/'+String(brt.getMonth()+1).padStart(2,'0')+'/'+brt.getFullYear();
+  document.title='Dashboard Digisac - '+ds;
+  document.getElementById('headerSub').innerHTML='Friedrich Advocacia M\xe9dica &amp; Odontol\xf3gica \xb7 '+ds;
+  document.getElementById('vMsgs').textContent=stats.totalMsgs;
+  document.getElementById('sMsgs').textContent=stats.received+' recebidas \xb7 '+stats.sent+' enviadas';
+  document.getElementById('vConversas').textContent=stats.convCount;
+  document.getElementById('sConversas').textContent=stats.individuals+' individuais \xb7 '+stats.groups+' grupos';
+  document.getElementById('vUnread').textContent=stats.totalUnread;
+  document.getElementById('vTempo').textContent=formatTime(stats.avgResp);
+  document.getElementById('vContatos').textContent=stats.totalContacts;
+  var ch=Object.keys(stats.channels);document.getElementById('vCanal').textContent=ch[0]||'\u2014';document.getElementById('sCanal').textContent=ch.length===1?'\xfanico canal conectado':ch.length+' canais';
+  if(chartHours)chartHours.destroy();chartHours=new Chart(document.getElementById('chartHours'),{type:'bar',data:{labels:Array.from({length:24},function(_,i){return i+'h'}),datasets:[{label:'Mensagens',data:stats.byHour,backgroundColor:'#38bdf8',borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{stepSize:5}}}}});
+  var top8=stats.conversations.slice(0,8);if(chartContacts)chartContacts.destroy();chartContacts=new Chart(document.getElementById('chartContacts'),{type:'bar',data:{labels:top8.map(function(c){return c.name.length>25?c.name.slice(0,22)+'...':c.name}),datasets:[{label:'Recebidas',data:top8.map(function(c){return c.recv}),backgroundColor:'#818cf8',borderRadius:4},{label:'Enviadas',data:top8.map(function(c){return c.sent}),backgroundColor:'#34d399',borderRadius:4}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{position:'top'}},scales:{x:{beginAtZero:true,stacked:true},y:{stacked:true,ticks:{font:{size:11}}}}}});
+  var tbody=document.getElementById('tableBody');if(stats.conversations.length===0){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:#94a3b8">Nenhuma conversa hoje</td></tr>';}else{tbody.innerHTML=stats.conversations.slice(0,20).map(function(c){return'<tr><td>'+c.name+'</td><td>'+(c.isGroup?'<span class="badge badge-group">Grupo</span>':'<span class="badge badge-individual">Individual</span>')+'</td><td>'+c.recv+'</td><td>'+c.sent+'</td><td><strong>'+c.total+'</strong></td><td>'+(c.unread>0?'<span class="badge badge-unread">'+c.unread+'</span>':'0')+'</td></tr>'}).join('');}
+  document.getElementById('usersGrid').innerHTML=stats.users.map(function(u){var s=u.status||'offline';return'<div class="user-card"><div class="user-dot" style="background:'+(s==='online'?'#34d399':s==='away'?'#fbbf24':'#64748b')+'"></div><div><strong>'+(u.name||'Sem nome')+'</strong><br><span style="font-size:0.75rem;color:#94a3b8">'+(s==='online'?'Online':s==='away'?'Ausente':'Offline')+'</span></div></div>'}).join('');
+  var now=nowBRT(),ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('footerText').textContent='Dados via API Digisac \xb7 \xdaltima atualiza\xe7\xe3o: '+ds+' \xe0s '+ts;document.getElementById('lastUpdate').textContent='Atualizado '+ts;
 }
 
-async function refreshDashboard() {
-  var btn = document.getElementById('btnRefresh');
-  var dot = document.getElementById('statusDot');
-  btn.classList.add('loading');
-
-  try {
-    var data = await fetchAllData();
-    var stats = processData(data);
-    render(stats);
-    dot.className = 'status-dot dot-ok';
-  } catch(e) {
-    console.error('Erro ao atualizar:', e);
-    dot.className = 'status-dot dot-err';
-    document.getElementById('lastUpdate').textContent = 'Erro ao atualizar';
-  } finally {
-    btn.classList.remove('loading');
-  }
-}
-
-function setupAutoRefresh() {
-  document.getElementById('autoRefreshBanner').style.display = 'block';
-  setInterval(function() {
-    var brt = nowBRT();
-    if (brt.getHours() === 18 && brt.getMinutes() === 0) {
-      console.log('Auto-refresh 18:00 BRT');
-      refreshDashboard();
-    }
-  }, 30000);
-}
-
-// Init
-Chart.defaults.color = '#94a3b8';
-Chart.defaults.borderColor = '#334155';
-
-(async function() {
-  await refreshDashboard();
-  document.getElementById('loadingOverlay').style.display = 'none';
-  setupAutoRefresh();
-})();
+async function refreshDashboard(){var btn=document.getElementById('btnRefresh'),dot=document.getElementById('statusDot');btn.classList.add('loading');try{var d=await fetchAllData();render(processData(d));dot.className='status-dot dot-ok';}catch(e){console.error('Erro:',e);dot.className='status-dot dot-err';document.getElementById('lastUpdate').textContent='Erro';}finally{btn.classList.remove('loading');}}
+function setupAutoRefresh(){document.getElementById('autoRefreshBanner').style.display='block';setInterval(function(){var b=nowBRT();if(b.getHours()===18&&b.getMinutes()===0){console.log('Auto-refresh 18:00');refreshDashboard();}},30000);}
+Chart.defaults.color='#94a3b8';Chart.defaults.borderColor='#334155';
+(async function(){await refreshDashboard();document.getElementById('loadingOverlay').style.display='none';setupAutoRefresh();})();
 </script>
 </body>
 </html>
