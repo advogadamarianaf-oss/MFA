@@ -122,7 +122,7 @@ async function apiGet(path,extra){
 async function fetchTodayMessages(){
   var today=todayISO().substring(0,10);var all=[],page=1;
   while(page<=100){try{
-    var r=await fetch(BASE_URL+'/messages?page='+page+'&order[0][0]=createdAt&order[0][1]=DESC',{headers:HEADERS});
+    var r=await fetch(BASE_URL+'/messages?page='+page+'&include=contact&order[0][0]=createdAt&order[0][1]=DESC',{headers:HEADERS});
     if(!r.ok)break;var body=await r.json();var msgs=body.data||body;if(!msgs.length)break;
     var done=false;
     for(var i=0;i<msgs.length;i++){if((msgs[i].createdAt||'').substring(0,10)>=today)all.push(msgs[i]);else{done=true;break;}}
