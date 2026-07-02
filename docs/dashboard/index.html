@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Comercial — Mariana Friedrich Advocacia</title>
-<link rel="icon" href="../assets/images/favicon.ico">
+<link rel="icon" type="image/png" href="../assets/logo-icon.png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -19,6 +19,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 /* Navbar */
 .navbar{background:linear-gradient(135deg,#1a1d27 0%,#222b45 100%);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;position:sticky;top:0;z-index:100}
 .navbar-left{display:flex;align-items:center;gap:16px}
+.navbar-logo{height:36px;width:auto;border-radius:4px}
 .navbar-title{font-size:1.1rem;font-weight:700;letter-spacing:.5px;white-space:nowrap}
 .navbar-title span{color:var(--accent);font-weight:400}
 .navbar-tabs{display:flex;gap:4px;margin-left:32px}
@@ -180,6 +181,7 @@ tr:hover td{background:rgba(79,140,255,.04)}
 <nav class="navbar">
   <div class="navbar-left">
     <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
+    <img src="../assets/logo-icon.png" alt="MF" class="navbar-logo">
     <div class="navbar-title">DASHBOARD COMERCIAL <span>— Mariana Friedrich Advocacia</span></div>
     <div class="navbar-tabs">
       <button class="tab-btn active" data-tab="diario" onclick="switchTab('diario')">Diario</button>
