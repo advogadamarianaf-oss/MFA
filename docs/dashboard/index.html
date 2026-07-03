@@ -768,30 +768,19 @@ function getKPIData() {
   var leads, reunioes, compareceram, fechados, receita, investMidia, investTotal;
   var subLabel = '';
 
-  if (currentTab === 'mensal' && mensal) {
-    // Use current month row from MENSAL tab, fallback to TOTAL
+  if (currentTab === 'mensal') {
     var now = new Date();
-    var mesNomes = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
-    var mesAtual = mesNomes[now.getMonth()];
-    var mesRow = null;
-    var totalRow = null;
-    for (var m = 0; m < mensal.rows.length; m++) {
-      var nome = String(mensal.rows[m][0] || '').trim().toUpperCase();
-      if (nome === mesAtual) mesRow = mensal.rows[m];
-      if (nome.indexOf('TOTAL') >= 0) totalRow = mensal.rows[m];
-    }
-    var row = mesRow || totalRow || [];
-    leads = toNum(row[2]);
-    fechados = toNum(row[7]);
-    receita = parseMoneyValue(row[9]);
-    investMidia = parseMoneyValue(row[3]);
-    investTotal = parseMoneyValue(row[5]);
-    // reuniões/compareceram not in MENSAL — derive from HISTÓRICO for the month
+    var mesNomes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
     var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     var monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    leads = countLeadsInRange(monthStart, monthEnd);
     reunioes = sumPositiveDeltas(2, monthStart, monthEnd);
     compareceram = sumPositiveDeltas(3, monthStart, monthEnd);
-    subLabel = mesAtual.charAt(0) + mesAtual.slice(1).toLowerCase();
+    fechados = sumPositiveDeltas(4, monthStart, monthEnd);
+    receita = sumPositiveDeltas(5, monthStart, monthEnd);
+    investMidia = sumPositiveDeltas(6, monthStart, monthEnd);
+    investTotal = sumPositiveDeltas(7, monthStart, monthEnd);
+    subLabel = mesNomes[now.getMonth()];
   } else if (currentTab === 'semanal') {
     var today = new Date();
     var dayOfWeek = today.getDay();
