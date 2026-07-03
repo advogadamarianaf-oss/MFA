@@ -479,6 +479,10 @@ function formatDateFull(d) {
   return dd + '/' + mm + '/' + yy;
 }
 
+function toISODate(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
 // ISO week number
 function getISOWeek(d) {
   var dt = new Date(d.getTime());
@@ -571,10 +575,34 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(function(el){
     el.classList.toggle('active', el.id === 'tab-' + tab);
   });
+  autoFilterForTab(tab);
   if (DATA.historico) {
-    renderKPIs();
-    renderFunnel();
+    renderAll();
   }
+}
+
+function autoFilterForTab(tab) {
+  var today = new Date();
+  var y = today.getFullYear(), m = today.getMonth(), d = today.getDate();
+  var startStr = '', endStr = '';
+  if (tab === 'diario') {
+    startStr = toISODate(new Date(y, m, d));
+    endStr = startStr;
+  } else if (tab === 'semanal') {
+    var dow = today.getDay();
+    var mondayOff = dow === 0 ? 6 : dow - 1;
+    var monday = new Date(y, m, d - mondayOff);
+    var sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
+    startStr = toISODate(monday);
+    endStr = toISODate(sunday);
+  } else if (tab === 'mensal') {
+    startStr = toISODate(new Date(y, m, 1));
+    endStr = toISODate(new Date(y, m + 1, 0));
+  }
+  document.getElementById('filterStart').value = startStr;
+  document.getElementById('filterEnd').value = endStr;
+  filterStart = startStr ? new Date(startStr + 'T00:00:00') : null;
+  filterEnd = endStr ? new Date(endStr + 'T23:59:59') : null;
 }
 window.switchTab = switchTab;
 
@@ -674,6 +702,7 @@ async function loadAllData() {
       DATA.crmData = await crmResp.json();
     } catch(e) { console.warn('CRM snapshot not loaded:', e); }
 
+    autoFilterForTab(currentTab);
     renderAll();
   } catch(e) {
     console.error(e);
@@ -763,8 +792,18 @@ function getKPIData() {
     investMidia = toNum(lastRow[6]) - toNum(weekStartRow[6]);
     investTotal = toNum(lastRow[7]) - toNum(weekStartRow[7]);
     subLabel = 'Esta semana';
+  } else if (currentTab === 'diario') {
+    // Diário: today's delta
+    leads = toNum(lastRow[1]) - toNum(prevRow[1]);
+    reunioes = toNum(lastRow[2]) - toNum(prevRow[2]);
+    compareceram = toNum(lastRow[3]) - toNum(prevRow[3]);
+    fechados = toNum(lastRow[4]) - toNum(prevRow[4]);
+    receita = toNum(lastRow[5]) - toNum(prevRow[5]);
+    investMidia = toNum(lastRow[6]) - toNum(prevRow[6]);
+    investTotal = toNum(lastRow[7]) - toNum(prevRow[7]);
+    subLabel = 'Hoje';
   } else {
-    // Diário: cumulative total (last row)
+    // Insights / Comercial: cumulative total
     leads = toNum(lastRow[1]);
     reunioes = toNum(lastRow[2]);
     compareceram = toNum(lastRow[3]);
@@ -798,7 +837,7 @@ function getKPIData() {
   }
 
   // Recalculate CPL/CAC/ROI for the period when not using totals
-  if (currentTab !== 'diario') {
+  if (currentTab === 'semanal' || currentTab === 'mensal') {
     cpl = leads > 0 ? investMidia / leads : 0;
     cacVal = fechados > 0 ? investTotal / fechados : 0;
     roiVista = investTotal > 0 ? (receita - investTotal) / investTotal : 0;
@@ -808,7 +847,9 @@ function getKPIData() {
     leads: leads, reunioes: reunioes, compareceram: compareceram,
     fechados: fechados, receita: receita, investMidia: investMidia,
     investTotal: investTotal, leadsHoje: leadsHoje,
-    cpl: cpl, cacVal: cacVal, roiVista: roiVista, subLabel: subLabel
+    cpl: cpl, cacVal: cacVal, roiVista: roiVista, subLabel: subLabel,
+    acumLeads: toNum(lastRow[1]), acumReunioes: toNum(lastRow[2]),
+    acumFechados: toNum(lastRow[4]), acumReceita: toNum(lastRow[5])
   };
 }
 
@@ -819,7 +860,7 @@ function renderKPIs() {
   var convLC = d.leads > 0 ? d.fechados / d.leads : 0;
 
   document.getElementById('k-leads').textContent = fmt(d.leads);
-  document.getElementById('k-leads-sub').textContent = currentTab === 'diario' ? 'Hoje: +' + d.leadsHoje : d.subLabel;
+  document.getElementById('k-leads-sub').textContent = currentTab === 'diario' ? 'Total: ' + fmt(d.acumLeads) : d.subLabel;
   document.getElementById('k-reunioes').textContent = fmt(d.reunioes);
   document.getElementById('k-reunioes-sub').textContent = 'Tx comparecimento: ' + fmtPct(txComp);
   document.getElementById('k-fechados').textContent = fmt(d.fechados);
@@ -846,7 +887,6 @@ function renderHistorico() {
     var r = hist.rows[i];
     var d = parseGvizDate(r[0]);
     if (!d) continue;
-    if (!isInRange(d)) continue;
     labels.push(formatDateShort(d));
     leads.push(toNum(r[1]));
     reunioes.push(toNum(r[2]));
@@ -1030,6 +1070,10 @@ function renderInvestSemanal() {
     }
     if (canal === 'GOOGLE') weekMap[semana].google += investVal;
     else if (canal === 'META') weekMap[semana].meta += investVal;
+  }
+
+  if (currentTab === 'semanal' && weeks.length > 0) {
+    weeks = [weeks[weeks.length - 1]];
   }
 
   var labels = weeks;
@@ -1218,12 +1262,19 @@ function renderMensalTable() {
   }
   html += '</tr></thead><tbody>';
 
+  var mesNomesFiltro = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+  var mesAtualFiltro = mesNomesFiltro[new Date().getMonth()];
+
   for (var i = 0; i < mensal.rows.length; i++) {
     var r = mensal.rows[i];
     var mes = String(r[0]).trim();
     if (!mes) continue;
     // Skip "DEFASAGEM TEMPORAL" note row
     if (mes.toUpperCase().indexOf('DEFASAGEM') >= 0) continue;
+    if (currentTab === 'mensal') {
+      var isTotal = mes.toUpperCase().indexOf('TOTAL') >= 0;
+      if (!isTotal && mes.toUpperCase() !== mesAtualFiltro) continue;
+    }
 
     var isTotalRow = mes.toUpperCase().indexOf('TOTAL') >= 0;
 
@@ -1258,6 +1309,8 @@ function renderMensalTable() {
 function renderReceitaInvest() {
   var mensal = DATA.mensal;
   var labels = [], investData = [], receitaData = [];
+  var mesNomesRI = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+  var mesAtualRI = mesNomesRI[new Date().getMonth()];
 
   for (var i = 0; i < mensal.rows.length; i++) {
     var r = mensal.rows[i];
@@ -1265,6 +1318,7 @@ function renderReceitaInvest() {
     if (!mes) continue;
     if (mes.toUpperCase().indexOf('TOTAL') >= 0) continue;
     if (mes.toUpperCase().indexOf('DEFASAGEM') >= 0) continue;
+    if (currentTab === 'mensal' && mes.toUpperCase() !== mesAtualRI) continue;
 
     labels.push(mes);
     investData.push(toNum(r[5]));  // Invest. Total
@@ -1302,6 +1356,8 @@ function renderReceitaInvest() {
 function renderRoiMensal() {
   var mensal = DATA.mensal;
   var labels = [], roiVistaData = [], roiAnualData = [];
+  var mesNomesROI = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+  var mesAtualROI = mesNomesROI[new Date().getMonth()];
 
   for (var i = 0; i < mensal.rows.length; i++) {
     var r = mensal.rows[i];
@@ -1309,9 +1365,10 @@ function renderRoiMensal() {
     if (!mes) continue;
     if (mes.toUpperCase().indexOf('TOTAL') >= 0) continue;
     if (mes.toUpperCase().indexOf('DEFASAGEM') >= 0) continue;
+    if (currentTab === 'mensal' && mes.toUpperCase() !== mesAtualROI) continue;
 
     labels.push(mes);
-    roiVistaData.push(toNum(r[11]) * 100);  // Convert to percentage for display
+    roiVistaData.push(toNum(r[11]) * 100);
     roiAnualData.push(toNum(r[12]) * 100);
   }
 
