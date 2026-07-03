@@ -793,14 +793,22 @@ function getKPIData() {
     investTotal = toNum(lastRow[7]) - toNum(weekStartRow[7]);
     subLabel = 'Esta semana';
   } else if (currentTab === 'diario') {
-    // Diário: today's delta
-    leads = toNum(lastRow[1]) - toNum(prevRow[1]);
-    reunioes = toNum(lastRow[2]) - toNum(prevRow[2]);
-    compareceram = toNum(lastRow[3]) - toNum(prevRow[3]);
-    fechados = toNum(lastRow[4]) - toNum(prevRow[4]);
-    receita = toNum(lastRow[5]) - toNum(prevRow[5]);
-    investMidia = toNum(lastRow[6]) - toNum(prevRow[6]);
-    investTotal = toNum(lastRow[7]) - toNum(prevRow[7]);
+    // Diário: today's delta (find row just before today, same logic as semanal)
+    var todayStart = new Date();
+    todayStart.setHours(0,0,0,0);
+    var yesterdayRow = null;
+    for (var di = 0; di < hist.rows.length; di++) {
+      var dd = parseGvizDate(hist.rows[di][0]);
+      if (dd && dd >= todayStart) { yesterdayRow = hist.rows[di > 0 ? di - 1 : 0]; break; }
+    }
+    if (!yesterdayRow) yesterdayRow = hist.rows[hist.rows.length - 2] || hist.rows[0] || [];
+    leads = toNum(lastRow[1]) - toNum(yesterdayRow[1]);
+    reunioes = toNum(lastRow[2]) - toNum(yesterdayRow[2]);
+    compareceram = toNum(lastRow[3]) - toNum(yesterdayRow[3]);
+    fechados = toNum(lastRow[4]) - toNum(yesterdayRow[4]);
+    receita = toNum(lastRow[5]) - toNum(yesterdayRow[5]);
+    investMidia = toNum(lastRow[6]) - toNum(yesterdayRow[6]);
+    investTotal = toNum(lastRow[7]) - toNum(yesterdayRow[7]);
     subLabel = 'Hoje';
   } else {
     // Insights / Comercial: cumulative total
