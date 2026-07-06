@@ -162,20 +162,35 @@ async function fetchTodayMessages(){
   return all;
 }
 
+async function fetchAllContacts(){
+  var all=[],page=1;
+  while(page<=50){try{
+    var r=await fetch(BASE_URL+'/contacts?page='+page,{headers:HEADERS});
+    if(!r.ok)break;var body=await r.json();
+    if(!body.data||!body.data.length)break;
+    all=all.concat(body.data);
+    if(all.length>=(body.total||all.length))break;
+  }catch(e){break;}page++;}
+  return all;
+}
+
 async function fetchAllData(){
   var msgP=fetchTodayMessages();
-  var otherP=Promise.all([apiGet('users',''),apiGet('services','')]);
-  var messages=await msgP;var others=await otherP;var totalContacts=0;
-  try{var r=await fetch(BASE_URL+'/contacts?page=1',{headers:HEADERS});var b=await r.json();totalContacts=b.total||b.totalCount||(b.data?b.data.length:0);}catch(e){}
-  return{messages:messages,users:others[0],services:others[1],ticketsOpen:[],totalContacts:totalContacts};
+  var otherP=Promise.all([apiGet('users',''),apiGet('services',''),fetchAllContacts()]);
+  var messages=await msgP;var others=await otherP;
+  return{messages:messages,users:others[0],services:others[1],ticketsOpen:[],contacts:others[2],totalContacts:others[2].length};
 }
 
 function processData(data){
   var msgs=data.messages,recv=msgs.filter(function(m){return!m.isFromMe}),sent=msgs.filter(function(m){return m.isFromMe});
   var byHour=new Array(24).fill(0);
   msgs.forEach(function(m){try{var d=new Date(m.createdAt||m.timestamp);byHour[(d.getUTCHours()+24+BRT_OFFSET)%24]++;}catch(e){}});
-  var convMap={},totalUnread=0;
-  msgs.forEach(function(m){var k=m.contactId||m.ticketId||'other';if(!convMap[k])convMap[k]={name:(m.contact&&m.contact.name)||m.contactName||k,isGroup:m.isGroup||(m.contact&&m.contact.isGroup)||false,recv:0,sent:0,unread:0};if(m.isFromMe)convMap[k].sent++;else convMap[k].recv++;if(!m.isRead&&!m.isFromMe){convMap[k].unread++;totalUnread++;}});
+  var unreadByContact={};
+  (data.contacts||[]).forEach(function(c){if(c.unread>0)unreadByContact[c.id]=c.unread;});
+  var totalUnread=0;
+  Object.keys(unreadByContact).forEach(function(k){totalUnread+=unreadByContact[k];});
+  var convMap={};
+  msgs.forEach(function(m){var k=m.contactId||m.ticketId||'other';if(!convMap[k])convMap[k]={name:(m.contact&&m.contact.name)||m.contactName||k,isGroup:m.isGroup||(m.contact&&m.contact.isGroup)||false,recv:0,sent:0,unread:unreadByContact[m.contactId]||0};if(m.isFromMe)convMap[k].sent++;else convMap[k].recv++;});
   var conversations=Object.values(convMap).map(function(c){return Object.assign({},c,{total:c.recv+c.sent})}).sort(function(a,b){return b.total-a.total});
   var contactMsgs={};msgs.forEach(function(m){var c=m.contactId;if(!c)return;if(!contactMsgs[c])contactMsgs[c]=[];contactMsgs[c].push(m);});
   var respTimes=[];Object.values(contactMsgs).forEach(function(cm){cm.sort(function(a,b){return(a.createdAt||'').localeCompare(b.createdAt||'')});for(var i=0;i<cm.length-1;i++){if(!cm[i].isFromMe&&cm[i+1].isFromMe){var d=(new Date(cm[i+1].createdAt||cm[i+1].timestamp)-new Date(cm[i].createdAt||cm[i].timestamp))/1000;if(d>0&&d<86400)respTimes.push(d);}}});
