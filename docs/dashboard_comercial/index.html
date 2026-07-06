@@ -60,11 +60,28 @@
   .loading-overlay p { color:#94a3b8; font-size:0.9rem; }
   .footer { text-align:center; color:#475569; font-size:0.7rem; margin-top:24px; padding-bottom:16px; }
   .auto-refresh-banner { background:#1e3a5f; color:#38bdf8; text-align:center; padding:6px; font-size:0.75rem; display:none; }
+
+  /* Hamburger & Sidebar */
+  .hamburger{background:none;border:none;color:#e2e8f0;font-size:1.5rem;cursor:pointer;padding:4px 8px;line-height:1}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200}
+  .sidebar-overlay.open{display:block}
+  .sidebar{position:fixed;top:0;left:-280px;width:280px;height:100vh;background:#1e293b;border-right:1px solid #334155;z-index:201;transition:left .3s ease;padding:20px;display:flex;flex-direction:column;gap:8px}
+  .sidebar.open{left:0}
+  .sidebar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+  .sidebar-header h2{font-size:1rem;font-weight:700}
+  .sidebar-close{background:none;border:none;color:#94a3b8;font-size:1.4rem;cursor:pointer}
+  .sidebar-divider{height:1px;background:#334155;margin:12px 0}
+  .sidebar-section{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;padding:0 16px;margin-bottom:6px}
+  .sidebar-link{display:flex;align-items:center;gap:10px;background:transparent;border:1px solid transparent;color:#94a3b8;padding:12px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;text-align:left;transition:.2s;width:100%;text-decoration:none}
+  .sidebar-link:hover{color:#e2e8f0;background:rgba(56,189,248,.08)}
+  .sidebar-link.current{color:#38bdf8;background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.2);pointer-events:none}
+  .sidebar-link .link-icon{font-size:1.1rem}
 </style>
 </head>
 <body>
 <div class="auto-refresh-banner" id="autoRefreshBanner">⏰ Atualização automática agendada para 18:00</div>
 <nav class="navbar">
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
   <img src="../assets/logo-full.png" alt="Friedrich Advocacia">
   <div class="nav-title">DASHBOARD DE ATENDIMENTO <span>— Digisac</span></div>
   <div class="nav-actions">
@@ -73,6 +90,17 @@
     <button class="btn-refresh" id="btnRefresh" onclick="refreshDashboard()"><span class="icon">↻</span> Atualizar</button>
   </div>
 </nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Menu</h2>
+    <button class="sidebar-close" onclick="closeSidebar()">&times;</button>
+  </div>
+  <div class="sidebar-section">Dashboards</div>
+  <a class="sidebar-link" href="../dashboard/"><span class="link-icon">&#128202;</span> Comercial</a>
+  <a class="sidebar-link current" href="../dashboard_comercial/"><span class="link-icon">&#128172;</span> Atendimento</a>
+</div>
 <div class="content">
   <div class="header"><p id="headerSub">Friedrich Advocacia Médica &amp; Odontológica</p></div>
   <div class="cards" id="cardsContainer">
@@ -97,6 +125,9 @@
 </div>
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"><div class="spinner-ring"></div><p>Buscando dados do Digisac...</p></div></div>
 <script>
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+
 var API_KEY='cad9aefe07bfcc14e3bdb4b89d7b998f8c2e06f2';
 var BASE_URL='https://friedrichmagroadv.digisac.co/api/v1';
 var HEADERS={'Authorization':'Bearer '+API_KEY,'Content-Type':'application/json'};

@@ -30,7 +30,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .navbar-status{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text2)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.5rem;cursor:pointer;padding:4px 8px;line-height:1}
+.hamburger{background:none;border:none;color:var(--text);font-size:1.5rem;cursor:pointer;padding:4px 8px;line-height:1}
 
 /* Sidebar mobile */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200}
@@ -43,6 +43,12 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .sidebar-tab{background:transparent;border:1px solid transparent;color:var(--text2);padding:12px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;text-align:left;transition:.2s;width:100%}
 .sidebar-tab:hover{color:var(--text);background:rgba(79,140,255,.08)}
 .sidebar-tab.active{background:rgba(79,140,255,.15);color:var(--accent);border-color:rgba(79,140,255,.3)}
+.sidebar-divider{height:1px;background:var(--border);margin:12px 0}
+.sidebar-section{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--text2);padding:0 16px;margin-bottom:6px}
+.sidebar-link{display:flex;align-items:center;gap:10px;background:transparent;border:1px solid transparent;color:var(--text2);padding:12px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:600;text-align:left;transition:.2s;width:100%;text-decoration:none}
+.sidebar-link:hover{color:var(--text);background:rgba(79,140,255,.08)}
+.sidebar-link.current{color:var(--accent);background:rgba(79,140,255,.1);border-color:rgba(79,140,255,.2);pointer-events:none}
+.sidebar-link .link-icon{font-size:1.1rem}
 
 /* Container */
 .container{max-width:1440px;margin:0 auto;padding:20px 24px}
@@ -120,7 +126,6 @@ tr:hover td{background:rgba(79,140,255,.04)}
   .charts-grid{grid-template-columns:1fr}
   .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
   .navbar-tabs{display:none}
-  .hamburger{display:block}
   .container{padding:14px}
   .navbar{padding:0 14px}
   .filter-bar{flex-direction:column;align-items:stretch}
@@ -206,6 +211,11 @@ tr:hover td{background:rgba(79,140,255,.04)}
     <h2>Menu</h2>
     <button class="sidebar-close" onclick="closeSidebar()">&times;</button>
   </div>
+  <div class="sidebar-section">Dashboards</div>
+  <a class="sidebar-link current" href="../dashboard/"><span class="link-icon">&#128202;</span> Comercial</a>
+  <a class="sidebar-link" href="../dashboard_comercial/"><span class="link-icon">&#128172;</span> Atendimento</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">Abas</div>
   <button class="sidebar-tab active" data-tab="diario" onclick="switchTab('diario');closeSidebar()">Diario</button>
   <button class="sidebar-tab" data-tab="semanal" onclick="switchTab('semanal');closeSidebar()">Semanal</button>
   <button class="sidebar-tab" data-tab="mensal" onclick="switchTab('mensal');closeSidebar()">Mensal</button>
