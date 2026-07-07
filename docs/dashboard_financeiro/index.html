@@ -139,9 +139,40 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 @media(max-width:400px){
   .kpi-grid{grid-template-columns:1fr}
 }
+
+/* ── Lock screen ── */
+.lock-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.lock-screen.hidden{display:none}
+.lock-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:100%;max-width:380px;text-align:center}
+.lock-icon{font-size:2.4rem;margin-bottom:16px;opacity:.7}
+.lock-title{font-size:1.1rem;font-weight:700;margin-bottom:6px;letter-spacing:.3px}
+.lock-sub{font-size:.8rem;color:var(--text2);margin-bottom:24px}
+.lock-input{width:100%;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.92rem;font-family:inherit;outline:none;transition:.2s;text-align:center;letter-spacing:2px}
+.lock-input:focus{border-color:var(--accent)}
+.lock-input.error{border-color:var(--red);animation:shake .4s}
+.lock-btn{width:100%;margin-top:14px;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;letter-spacing:.3px}
+.lock-btn:hover{opacity:.85}
+.lock-error{font-size:.75rem;color:var(--red);margin-top:10px;min-height:18px}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.app-hidden{display:none}
 </style>
 </head>
 <body>
+
+<!-- Lock screen -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">Dados Restritos</div>
+    <div class="lock-sub">Digite a senha para acessar o dashboard financeiro</div>
+    <input type="password" class="lock-input" id="lockInput" placeholder="••••••" autocomplete="off">
+    <button class="lock-btn" id="lockBtn" onclick="tryUnlock()">Acessar</button>
+    <div class="lock-error" id="lockError"></div>
+  </div>
+</div>
+
+<!-- App wrapper (hidden until unlocked) -->
+<div id="appWrap" class="app-hidden">
 
 <!-- Sidebar overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -422,8 +453,35 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     Fonte: dashboards manuais + 363 transações rastreáveis dos xlsx originais · Dados confidenciais · Jan-Mar 2026
   </div>
 </main>
+</div><!-- /appWrap -->
 
 <script>
+var PASS_HASH='a]e0d';function h(s){var v=0;for(var i=0;i<s.length;i++){v=((v<<5)-v)+s.charCodeAt(i);v|=0}return v.toString(36)}
+function tryUnlock(){
+  var inp=document.getElementById('lockInput');
+  var val=inp.value.trim();
+  if(!val)return;
+  if(val==='84kmes'){
+    document.getElementById('lockScreen').classList.add('hidden');
+    document.getElementById('appWrap').classList.remove('app-hidden');
+    sessionStorage.setItem('fin_ok','1');
+    setTimeout(function(){
+      document.querySelectorAll('.bar-fill[data-w]').forEach(function(el){el.style.width=el.dataset.w+'%'});
+      document.querySelectorAll('.ring-fg[data-target]').forEach(function(el){el.setAttribute('stroke-dashoffset',el.dataset.target)});
+    },300);
+  } else {
+    inp.classList.add('error');
+    document.getElementById('lockError').textContent='Senha incorreta';
+    setTimeout(function(){inp.classList.remove('error')},500);
+  }
+}
+document.getElementById('lockInput').addEventListener('keydown',function(e){if(e.key==='Enter')tryUnlock()});
+if(sessionStorage.getItem('fin_ok')==='1'){
+  document.getElementById('lockScreen').classList.add('hidden');
+  document.getElementById('appWrap').classList.remove('app-hidden');
+}
+window.addEventListener('DOMContentLoaded',function(){document.getElementById('lockInput').focus()});
+
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarOverlay').classList.toggle('open');
