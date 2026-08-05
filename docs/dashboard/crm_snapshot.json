@@ -1,99 +1,93 @@
 {
-  "updated_at": "2026-08-03T17:02:54.696Z",
+  "updated_at": "2026-08-05T17:02:06.350Z",
   "board_id": 2568,
   "board_name": "CRM - Comercial",
   "flow_ns": "f175863",
-  "total": 1895,
+  "total": 1926,
   "columns": [
     {
       "order": 1,
-      "name": "LEAD NÃO DEU A 1ª RESPOSTA APÓS FOLLOW UP'S",
+      "name": "LEAD NÃO RESPONDEU PRIMEIRO CONTATO",
       "ns": "f175863bd70851bn1202717",
-      "total": 994
+      "total": 1000
     },
     {
       "order": 2,
-      "name": "LEAD EM ATENDIMENTO PELA IA LUISA",
+      "name": "LEAD EM ATENDIMENTO",
       "ns": "f175863bd70851bn1202719",
-      "total": 208
+      "total": 213
     },
     {
       "order": 3,
-      "name": "LEAD CHEGOU ATÉ O AGENDAMENTO PELA IA",
+      "name": "LEAD QUALIFICADO",
       "ns": "f175863bd70851bn1499221",
-      "total": 110
+      "total": 115
     },
     {
       "order": 4,
-      "name": "REUNIÃO AGENDADA CLIENTES",
-      "ns": "f175863bd70851bn787133",
-      "total": 5
+      "name": "Reunião Agendada - ASSESSORIA ***",
+      "ns": "f175863bd70851bn1368945",
+      "total": 42
     },
     {
       "order": 5,
-      "name": "Reunião Agendada - ASSESSORIA ***",
-      "ns": "f175863bd70851bn1368945",
-      "total": 46
-    },
-    {
-      "order": 6,
       "name": "Reunião Agendada - DEFESA ***",
       "ns": "f175863bd70851bn1369937",
       "total": 17
     },
     {
-      "order": 7,
+      "order": 6,
       "name": "LEAD NÃO Compareceu à REUNIÃO",
       "ns": "f175863bd70851bn833693",
-      "total": 80
+      "total": 84
+    },
+    {
+      "order": 7,
+      "name": "LEAD compareceu a reunião aguardando fechamento",
+      "ns": "f175863bd70851bn1542297",
+      "total": 160
     },
     {
       "order": 8,
-      "name": "LEAD compareceu a reunião aguardando fechamento",
-      "ns": "f175863bd70851bn1542297",
-      "total": 153
+      "name": "Clientes",
+      "ns": "f175863bd70851bn1803675",
+      "total": 23
     },
     {
       "order": 9,
-      "name": "Clientes",
-      "ns": "f175863bd70851bn1803675",
-      "total": 19
-    },
-    {
-      "order": 10,
       "name": "Contrato Assinado",
       "ns": "f175863bd70851bn871983",
       "total": 82
     },
     {
-      "order": 11,
+      "order": 10,
       "name": "Contrato Assinado - ASSESSORIA ***",
       "ns": "f175863bd70851bn1369051",
-      "total": 14
+      "total": 16
+    },
+    {
+      "order": 11,
+      "name": "Contrato Assinado - DEFESA ***",
+      "ns": "f175863bd70851bn1369149",
+      "total": 19
     },
     {
       "order": 12,
-      "name": "Contrato Assinado - DEFESA ***",
-      "ns": "f175863bd70851bn1369149",
-      "total": 17
+      "name": "Lead Desqualificado",
+      "ns": "f175863bd70851bn551149",
+      "total": 134
     },
     {
       "order": 13,
-      "name": "Lead Desqualificado",
-      "ns": "f175863bd70851bn551149",
-      "total": 128
-    },
-    {
-      "order": 14,
       "name": "Contato Encerrado - Lead recusou",
       "ns": "f175863bd70851bn781291",
       "total": 18
     },
     {
-      "order": 15,
+      "order": 14,
       "name": "MENSAGENS COM ERRO",
       "ns": "f175863bd70851bn1797409",
-      "total": 4
+      "total": 3
     }
   ]
 }
