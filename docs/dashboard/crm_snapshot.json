@@ -1,39 +1,39 @@
 {
-  "updated_at": "2026-08-05T17:02:06.350Z",
+  "updated_at": "2026-08-05T21:44:52.809Z",
   "board_id": 2568,
   "board_name": "CRM - Comercial",
   "flow_ns": "f175863",
-  "total": 1926,
+  "total": 1928,
   "columns": [
     {
       "order": 1,
       "name": "LEAD NÃO RESPONDEU PRIMEIRO CONTATO",
       "ns": "f175863bd70851bn1202717",
-      "total": 1000
+      "total": 1001
     },
     {
       "order": 2,
       "name": "LEAD EM ATENDIMENTO",
       "ns": "f175863bd70851bn1202719",
-      "total": 213
+      "total": 210
     },
     {
       "order": 3,
       "name": "LEAD QUALIFICADO",
       "ns": "f175863bd70851bn1499221",
-      "total": 115
+      "total": 116
     },
     {
       "order": 4,
       "name": "Reunião Agendada - ASSESSORIA ***",
       "ns": "f175863bd70851bn1368945",
-      "total": 42
+      "total": 40
     },
     {
       "order": 5,
       "name": "Reunião Agendada - DEFESA ***",
       "ns": "f175863bd70851bn1369937",
-      "total": 17
+      "total": 18
     },
     {
       "order": 6,
@@ -63,7 +63,7 @@
       "order": 10,
       "name": "Contrato Assinado - ASSESSORIA ***",
       "ns": "f175863bd70851bn1369051",
-      "total": 16
+      "total": 18
     },
     {
       "order": 11,
@@ -75,7 +75,7 @@
       "order": 12,
       "name": "Lead Desqualificado",
       "ns": "f175863bd70851bn551149",
-      "total": 134
+      "total": 136
     },
     {
       "order": 13,
