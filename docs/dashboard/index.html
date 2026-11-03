@@ -166,6 +166,20 @@ tr:hover td{background:rgba(79,140,255,.04)}
 .rank-1{background:var(--yellow)}.rank-2{background:var(--accent)}.rank-3{background:var(--purple)}.rank-n{background:var(--border);color:var(--text2)}
 .bar-inline{height:8px;border-radius:4px;display:inline-block;vertical-align:middle;margin-left:6px}
 
+/* CRM: leads novos / origem */
+.crm-pill{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.68rem;font-weight:600;border:1px solid transparent;white-space:nowrap}
+.crm-pill-novo{background:rgba(0,214,143,.15);color:var(--green);border-color:rgba(0,214,143,.35);margin-left:4px}
+.crm-hint{font-size:.74rem;color:var(--text2);margin:-6px 0 12px;line-height:1.45}
+.crm-hint strong{color:var(--text)}
+.crm-section{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin:6px 0 12px;padding-top:8px;border-top:1px solid var(--border)}
+.crm-table td{vertical-align:top}
+.crm-table tr:hover td{background:rgba(79,140,255,.04)}
+.crm-table tr.crm-total td{border-top:2px solid var(--border);background:rgba(79,140,255,.05)}
+.crm-camp{color:var(--text2);font-size:.68rem}
+.crm-in{color:var(--green);font-weight:600}
+.crm-out{color:var(--text2)}
+.crm-link{color:var(--accent);text-decoration:none;font-size:.75rem;font-weight:600}
+.crm-link:hover{text-decoration:underline}
 /* CRM stage list */
 .crm-stage{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);transition:.15s}
 .crm-stage:last-child{border-bottom:none}
@@ -323,24 +337,64 @@ tr:hover td{background:rgba(79,140,255,.04)}
 
   <!-- Tab: Comercial (CRM) -->
   <div class="tab-content" id="tab-comercial">
+    <div class="filter-bar">
+      <label>Leads novos</label>
+      <select class="filter-input" id="crmPeriodo" onchange="renderComercial()">
+        <option value="7">Ultimos 7 dias</option>
+        <option value="14">Ultimos 14 dias</option>
+        <option value="30" selected>Ultimos 30 dias</option>
+        <option value="90">Ultimos 90 dias</option>
+        <option value="mes">Mes atual</option>
+        <option value="0">Desde o inicio</option>
+      </select>
+      <label>Origem</label>
+      <select class="filter-input" id="crmOrigem" onchange="renderComercial()">
+        <option value="">Todas</option>
+        <option value="meta">Meta Ads</option>
+        <option value="google">Google Ads</option>
+        <option value="organico">WhatsApp organico</option>
+        <option value="site">Site</option>
+        <option value="instagram">Instagram</option>
+        <option value="manual">Cadastro manual</option>
+      </select>
+      <input class="filter-input" id="crmBusca" placeholder="Buscar nome ou telefone" oninput="renderCrmTabela()" style="min-width:200px">
+      <span class="crm-snapshot-info" id="crm-updated" style="margin:0 0 0 auto"></span>
+    </div>
+
+    <div id="crm-novos-wrap">
+      <div class="metric-row" id="crm-novos-metrics"></div>
+      <div class="charts-grid">
+        <div class="chart-card full">
+          <h3>Leads novos por data de entrada <span class="badge">POR ORIGEM</span></h3>
+          <div class="chart-wrap"><canvas id="chartCrmNovos"></canvas></div>
+        </div>
+        <div class="chart-card full">
+          <h3>Quem entrou no periodo <span class="badge" id="crm-tabela-badge"></span></h3>
+          <p class="crm-hint">Ordenado pela data em que o lead <strong>entrou no CRM</strong>, nao pela ultima mensagem. Um cliente antigo que escreve hoje nao empurra os leads novos para baixo. "Ultima mensagem" mostra se foi o lead que escreveu ou se foi uma mensagem enviada a ele.</p>
+          <div class="table-wrap" id="crm-tabela"></div>
+        </div>
+        <div class="chart-card full">
+          <h3>Funil por origem <span class="badge">ACUMULADO</span></h3>
+          <p class="crm-hint">Todos os leads do CRM, independentemente do periodo. Percentuais em relacao aos leads daquela origem.</p>
+          <div class="table-wrap" id="crm-funil-origem"></div>
+        </div>
+        <div class="chart-card full">
+          <h3>Etapa atual por origem</h3>
+          <div class="chart-wrap"><canvas id="chartCrmOrigemEtapa"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="crm-section">Acumulado do CRM (todos os leads)</div>
     <div class="metric-row" id="crm-metrics"></div>
     <div class="charts-grid">
       <div class="chart-card full">
         <h3>Distribuicao por Etapa do CRM <span class="badge">COMERCIAL API OFICIAL</span></h3>
-        <div class="crm-snapshot-info" id="crm-updated"></div>
         <div id="crm-stages"></div>
       </div>
-      <div class="chart-card">
+      <div class="chart-card full">
         <h3>Funil CRM</h3>
         <div class="funnel" id="crm-funnel"></div>
-      </div>
-      <div class="chart-card">
-        <h3>Distribuicao Visual</h3>
-        <div class="chart-wrap small"><canvas id="chartCrmDist"></canvas></div>
-      </div>
-      <div class="chart-card full">
-        <h3>Leads por Grupo de Etapas</h3>
-        <div class="chart-wrap"><canvas id="chartCrmGroups"></canvas></div>
       </div>
     </div>
   </div>
@@ -588,6 +642,8 @@ function switchTab(tab) {
   autoFilterForTab(tab);
   if (DATA.historico) {
     renderAll();
+  } else if (DATA.crmData) {
+    renderComercial();
   }
 }
 
@@ -630,6 +686,12 @@ Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
 async function loadAllData() {
   document.getElementById('lastUpdate').textContent = 'carregando...';
   document.getElementById('error-container').innerHTML = '';
+
+  // O snapshot do CRM nao depende da planilha: carrega antes, para a aba Comercial funcionar sozinha.
+  try {
+    var crmResp = await fetch('crm_snapshot.json?v=' + Date.now());
+    DATA.crmData = await crmResp.json();
+  } catch(e) { console.warn('CRM snapshot not loaded:', e); }
 
   try {
     var results = await Promise.all([
@@ -706,17 +768,16 @@ async function loadAllData() {
     }
     DATA.metaRows = metaRows;
 
-    // Load CRM snapshot
-    try {
-      var crmResp = await fetch('crm_snapshot.json?v=' + Date.now());
-      DATA.crmData = await crmResp.json();
-    } catch(e) { console.warn('CRM snapshot not loaded:', e); }
-
     autoFilterForTab(currentTab);
     renderAll();
   } catch(e) {
     console.error(e);
-    showError('Erro ao carregar dados: ' + e.message);
+    if (DATA.crmData) {
+      showError('Planilha do Google indisponivel (' + e.message + '). Ela precisa estar compartilhada como "qualquer pessoa com o link". A aba Comercial (CRM) continua funcionando.');
+      renderComercial();
+    } else {
+      showError('Erro ao carregar dados: ' + e.message);
+    }
   }
 
   var now = new Date();
@@ -1665,53 +1726,124 @@ function renderTopCriativos() {
 }
 
 /* ── Comercial (CRM) Tab ── */
+// Etapas identificadas pelo sufixo do board_column_ns (estavel), nao pela posicao da coluna.
+var CRM_GRUPO_NS = {
+  '1202717': 'sem_resposta',
+  '1202719': 'atendimento', '1499221': 'atendimento', '2283501': 'atendimento',
+  '1368945': 'reuniao', '1369937': 'reuniao',
+  '833693': 'nao_compareceu',
+  '1542297': 'compareceu',
+  '1803675': 'contrato', '871983': 'contrato', '1369051': 'contrato', '1369149': 'contrato',
+  '551149': 'perdido', '781291': 'perdido',
+  '1797409': 'erro'
+};
+var CRM_GRUPOS = [
+  { id: 'sem_resposta', label: 'Sem resposta', color: '#9ca3b5' },
+  { id: 'atendimento', label: 'Em atendimento', color: '#4f8cff' },
+  { id: 'reuniao', label: 'Reuniao agendada', color: '#6c5ce7' },
+  { id: 'nao_compareceu', label: 'Nao compareceu', color: '#ff922b' },
+  { id: 'compareceu', label: 'Compareceu', color: '#ffc048' },
+  { id: 'contrato', label: 'Contrato / Cliente', color: '#00d68f' },
+  { id: 'perdido', label: 'Perdido', color: '#ff6b6b' },
+  { id: 'erro', label: 'Erro / outro', color: '#555b6e' }
+];
+var CRM_ORIGENS = [
+  { id: 'meta', label: 'Meta Ads', color: '#6c5ce7' },
+  { id: 'google', label: 'Google Ads', color: '#00d68f' },
+  { id: 'organico', label: 'WhatsApp organico', color: '#ffc048' },
+  { id: 'site', label: 'Site', color: '#4f8cff' },
+  { id: 'instagram', label: 'Instagram', color: '#ff922b' },
+  { id: 'manual', label: 'Cadastro manual', color: '#9ca3b5' }
+];
+var CRM_NOVOS = [];
+var CRM_TABELA_TUDO = false;
+function crmTabelaToggle() { CRM_TABELA_TUDO = !CRM_TABELA_TUDO; renderCrmTabela(); }
+
+function crmGrupo(ns) { var m = /bn(\d+)$/.exec(ns || ''); return (m && CRM_GRUPO_NS[m[1]]) || 'erro'; }
+function crmGrupoInfo(id) { for (var i = 0; i < CRM_GRUPOS.length; i++) if (CRM_GRUPOS[i].id === id) return CRM_GRUPOS[i]; return CRM_GRUPOS[CRM_GRUPOS.length - 1]; }
+function crmOrigemInfo(id) { for (var i = 0; i < CRM_ORIGENS.length; i++) if (CRM_ORIGENS[i].id === id) return CRM_ORIGENS[i]; return { id: id, label: id || 'Desconhecida', color: '#9ca3b5' }; }
+function crmPad(n) { return (n < 10 ? '0' : '') + n; }
+function crmParse(s) {
+  if (!s) return null;
+  var p = s.split(/[-T :]/);
+  if (p.length < 3) return null;
+  return new Date(+p[0], +p[1] - 1, +p[2], +(p[3] || 0), +(p[4] || 0));
+}
+function crmFmtData(d, comHora) {
+  if (!d) return '—';
+  var s = crmPad(d.getDate()) + '/' + crmPad(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(2);
+  return comHora ? s + ' ' + crmPad(d.getHours()) + ':' + crmPad(d.getMinutes()) : s;
+}
+function crmPill(info) { return '<span class="crm-pill" style="background:' + info.color + '22;color:' + info.color + ';border-color:' + info.color + '55">' + info.label + '</span>'; }
+function crmEsc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+// Soma por grupo de etapa + acumulados do funil (quem PASSOU por cada fase).
+function crmResumo(itens, grupoDe, pesoDe) {
+  var g = {};
+  CRM_GRUPOS.forEach(function(x) { g[x.id] = 0; });
+  var total = 0;
+  itens.forEach(function(it) { var p = pesoDe ? pesoDe(it) : 1; g[grupoDe(it)] += p; total += p; });
+  var fechados = g.contrato;
+  var compareceram = fechados + g.compareceu;
+  var realizadas = compareceram + g.nao_compareceu;
+  var reunioes = realizadas + g.reuniao;
+  return { grupos: g, total: total, reunioes: reunioes, realizadas: realizadas, compareceram: compareceram,
+           fechados: fechados, perdidos: g.perdido, responderam: total - g.sem_resposta - g.erro };
+}
+
+function crmPeriodoInicio() {
+  var el = document.getElementById('crmPeriodo');
+  var v = el ? el.value : '30';
+  var now = new Date();
+  if (v === '0') return null;
+  if (v === 'mes') return new Date(now.getFullYear(), now.getMonth(), 1);
+  var d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  d.setDate(d.getDate() - (parseInt(v, 10) - 1));
+  return d;
+}
+function crmPeriodoLabel() {
+  var el = document.getElementById('crmPeriodo');
+  return el ? el.options[el.selectedIndex].text.toLowerCase() : '';
+}
+
 function renderComercial() {
   var crm = DATA.crmData;
   if (!crm) return;
   var cols = crm.columns;
   var total = crm.total;
-
-  // Accumulated metrics (everyone who PASSED through each phase)
-  var reunioesAcum = 0; // stages 5-13: everyone who reached meeting phase
-  for (var ri = 4; ri <= 12; ri++) reunioesAcum += cols[ri].total;
-  var reunioesRealizadas = cols[7].total + cols[8].total; // stages 8-9: meetings that already happened (no contract yet)
-  for (var ci = 9; ci <= 12; ci++) reunioesRealizadas += cols[ci].total; // plus stages 10-13
-  var compareceramAcum = cols[8].total; // stage 9
-  for (var ca = 9; ca <= 12; ca++) compareceramAcum += cols[ca].total; // stages 9-13
-  var fechados = cols[9].total + cols[10].total + cols[11].total + cols[12].total; // stages 10-13
-  var perdidos = cols[13].total + cols[14].total; // stages 14-15
-
-  var txReuniaoTotal = total > 0 ? reunioesAcum / total : 0;
-  var txComparecimento = reunioesRealizadas > 0 ? compareceramAcum / reunioesRealizadas : 0;
-  var txFechamento = compareceramAcum > 0 ? fechados / compareceramAcum : 0;
-
-  // KPI cards
-  var html = '';
-  html += '<div class="metric-card accent"><div class="m-label">Total no CRM</div><div class="m-value">' + fmt(total) + '</div><div class="m-detail">leads no Comercial</div></div>';
-  html += '<div class="metric-card purple"><div class="m-label">Reunioes (acumulado)</div><div class="m-value">' + fmt(reunioesAcum) + '</div><div class="m-detail">' + fmtPct(txReuniaoTotal) + ' do total chegaram a reuniao</div></div>';
-  html += '<div class="metric-card yellow"><div class="m-label">Compareceram (acumulado)</div><div class="m-value">' + fmt(compareceramAcum) + '</div><div class="m-detail">' + fmtPct(txComparecimento) + ' das ' + fmt(reunioesRealizadas) + ' reunioes realizadas</div></div>';
-  html += '<div class="metric-card green"><div class="m-label">Contratos Assinados</div><div class="m-value">' + fmt(fechados) + '</div><div class="m-detail">' + fmtPct(txFechamento) + ' dos que compareceram</div></div>';
-  html += '<div class="metric-card red"><div class="m-label">Perdidos / Desqualificados</div><div class="m-value">' + fmt(perdidos) + '</div><div class="m-detail">' + fmtPct(total > 0 ? perdidos / total : 0) + ' do total</div></div>';
-  document.getElementById('crm-metrics').innerHTML = html;
+  var colByOrder = {};
+  cols.forEach(function(c) { colByOrder[c.order] = c; });
 
   // Snapshot timestamp
   var updatedAt = crm.updated_at ? new Date(crm.updated_at).toLocaleString('pt-BR') : 'desconhecido';
   document.getElementById('crm-updated').innerHTML = '<span class="dot-small"></span> Snapshot de ' + updatedAt;
 
-  // Stage list
-  var stageColors = ['#4f8cff','#6c5ce7','#b197fc','#ffc048','#00d68f','#00d68f','#00d68f','#ff6b6b','#ff922b','#4f8cff','#00d68f','#00d68f','#00d68f','#ff6b6b','#ff6b6b','#9ca3b5'];
+  // ── Acumulado (colunas do board) ──
+  var acc = crmResumo(cols, function(c) { return crmGrupo(c.ns); }, function(c) { return c.total; });
+  var txReuniaoTotal = total > 0 ? acc.reunioes / total : 0;
+  var txComparecimento = acc.realizadas > 0 ? acc.compareceram / acc.realizadas : 0;
+  var txFechamento = acc.compareceram > 0 ? acc.fechados / acc.compareceram : 0;
+  var html = '';
+  html += '<div class="metric-card accent"><div class="m-label">Total no CRM</div><div class="m-value">' + fmt(total) + '</div><div class="m-detail">leads no Comercial</div></div>';
+  html += '<div class="metric-card"><div class="m-label">Responderam</div><div class="m-value">' + fmt(acc.responderam) + '</div><div class="m-detail">' + fmtPct(total > 0 ? acc.responderam / total : 0) + ' do total &middot; ' + fmt(acc.grupos.sem_resposta) + ' sem resposta</div></div>';
+  html += '<div class="metric-card purple"><div class="m-label">Reunioes (acumulado)</div><div class="m-value">' + fmt(acc.reunioes) + '</div><div class="m-detail">' + fmtPct(txReuniaoTotal) + ' do total chegaram a reuniao</div></div>';
+  html += '<div class="metric-card yellow"><div class="m-label">Compareceram (acumulado)</div><div class="m-value">' + fmt(acc.compareceram) + '</div><div class="m-detail">' + fmtPct(txComparecimento) + ' das ' + fmt(acc.realizadas) + ' reunioes realizadas</div></div>';
+  html += '<div class="metric-card green"><div class="m-label">Contratos / Clientes</div><div class="m-value">' + fmt(acc.fechados) + '</div><div class="m-detail">' + fmtPct(txFechamento) + ' dos que compareceram</div></div>';
+  html += '<div class="metric-card red"><div class="m-label">Perdidos / Desqualificados</div><div class="m-value">' + fmt(acc.perdidos) + '</div><div class="m-detail">' + fmtPct(total > 0 ? acc.perdidos / total : 0) + ' do total</div></div>';
+  document.getElementById('crm-metrics').innerHTML = html;
+
+  // Stage list (cor pelo grupo da etapa)
   var maxStage = 0;
   for (var s = 0; s < cols.length; s++) if (cols[s].total > maxStage) maxStage = cols[s].total;
-
   var stagesHtml = '';
   for (var i = 0; i < cols.length; i++) {
     var c = cols[i];
     var pct = total > 0 ? (c.total / total * 100) : 0;
     var barW = maxStage > 0 ? (c.total / maxStage * 100) : 0;
-    var color = stageColors[i] || '#9ca3b5';
+    var color = crmGrupoInfo(crmGrupo(c.ns)).color;
     stagesHtml += '<div class="crm-stage">';
     stagesHtml += '<div class="crm-num" style="background:' + color + '">' + c.order + '</div>';
-    stagesHtml += '<div class="crm-name">' + c.name + '</div>';
+    stagesHtml += '<div class="crm-name">' + crmEsc(c.name) + '</div>';
     stagesHtml += '<div class="crm-count" style="color:' + color + '">' + fmt(c.total) + '</div>';
     stagesHtml += '<div class="crm-pct">' + pct.toFixed(1).replace('.', ',') + '%</div>';
     stagesHtml += '<div class="crm-bar-bg"><div class="crm-bar-fill" style="width:' + barW.toFixed(0) + '%;background:' + color + '"></div></div>';
@@ -1719,12 +1851,13 @@ function renderComercial() {
   }
   document.getElementById('crm-stages').innerHTML = stagesHtml;
 
-  // CRM Funnel (accumulated — how many passed through each phase)
+  // Funil acumulado
   var funnelData = [
     { label: 'Entraram no Comercial', value: total, color: 'var(--accent)' },
-    { label: 'Chegaram a Reuniao', value: reunioesAcum, color: 'var(--purple)' },
-    { label: 'Compareceram', value: compareceramAcum, color: 'var(--yellow)' },
-    { label: 'Fecharam Contrato', value: fechados, color: 'var(--green)' }
+    { label: 'Responderam', value: acc.responderam, color: 'var(--accent2)' },
+    { label: 'Chegaram a Reuniao', value: acc.reunioes, color: 'var(--purple)' },
+    { label: 'Compareceram', value: acc.compareceram, color: 'var(--yellow)' },
+    { label: 'Fecharam Contrato', value: acc.fechados, color: 'var(--green)' }
   ];
   var maxFunnel = funnelData[0].value || 1;
   var funnelHtml = '';
@@ -1735,62 +1868,209 @@ function renderComercial() {
     var fConvPct = fPrevVal > 0 ? ((f.value / fPrevVal) * 100).toFixed(1) : '0.0';
     funnelHtml += '<div class="funnel-step">';
     funnelHtml += '<div class="funnel-bar" style="width:' + Math.max(fPct, 12) + '%;background:' + f.color + '">' + fmt(f.value) + '</div>';
-    funnelHtml += '<div class="funnel-info"><strong>' + f.label + '</strong><br>' + fConvPct.replace('.', ',') + '% da etapa anterior</div>';
+    funnelHtml += '<div class="funnel-info"><strong>' + f.label + '</strong><br>' + fConvPct.replace('.', ',') + '% da etapa anterior &middot; ' + fPct.toFixed(1).replace('.', ',') + '% do topo</div>';
     funnelHtml += '</div>';
   }
   document.getElementById('crm-funnel').innerHTML = funnelHtml;
 
-  // Distribution doughnut + bar (accumulated funnel numbers)
-  var groupNames = ['Entraram no Comercial', 'Chegaram a Reuniao', 'Compareceram', 'Fecharam Contrato', 'Perdidos'];
-  var groupValues = [total, reunioesAcum, compareceramAcum, fechados, perdidos];
-  var groupColors = ['#4f8cff', '#6c5ce7', '#ffc048', '#00d68f', '#ff6b6b'];
-
-  // Filter out zero groups
-  var filteredNames = [], filteredValues = [], filteredColors = [];
-  for (var g = 0; g < groupValues.length; g++) {
-    if (groupValues[g] > 0) {
-      filteredNames.push(groupNames[g]);
-      filteredValues.push(groupValues[g]);
-      filteredColors.push(groupColors[g]);
+  // ── Leads novos por data de entrada (precisa do snapshot com "leads") ──
+  var leads = crm.leads || [];
+  var wrap = document.getElementById('crm-novos-wrap');
+  wrap.style.display = leads.length ? '' : 'none';
+  if (!leads.length) return;
+  leads.forEach(function(l) {
+    if (l._d === undefined) {
+      l._d = crmParse(l.criado);
+      l._u = crmParse(l.ultima);
+      l._g = crmGrupo((colByOrder[l.col] || {}).ns);
     }
-  }
+  });
+  var inicio = crmPeriodoInicio();
+  var origemSel = document.getElementById('crmOrigem').value;
+  CRM_TABELA_TUDO = false;
+  CRM_NOVOS = leads.filter(function(l) {
+    return (!inicio || (l._d && l._d >= inicio)) && (!origemSel || l.origem === origemSel);
+  });
+  renderCrmNovosKpis(CRM_NOVOS, inicio);
+  renderCrmNovosChart(CRM_NOVOS, inicio);
+  renderCrmTabela();
+  renderCrmFunilOrigem(leads);
+  renderCrmOrigemEtapa(leads);
+}
 
-  destroyChart('crmDist');
-  var ctx1 = document.getElementById('chartCrmDist').getContext('2d');
-  charts.crmDist = new Chart(ctx1, {
-    type: 'doughnut',
-    data: {
-      labels: filteredNames,
-      datasets: [{ data: filteredValues, backgroundColor: filteredColors, borderWidth: 0 }]
-    },
+function renderCrmNovosKpis(novos, inicio) {
+  var r = crmResumo(novos, function(l) { return l._g; });
+  var n = novos.length;
+  var periodo = crmPeriodoLabel();
+  var porOrigem = {};
+  novos.forEach(function(l) { porOrigem[l.origem] = (porOrigem[l.origem] || 0) + 1; });
+  var origens = CRM_ORIGENS.filter(function(o) { return porOrigem[o.id]; });
+  var html = '';
+  html += '<div class="metric-card accent"><div class="m-label">Leads novos</div><div class="m-value">' + fmt(n) + '</div><div class="m-detail">entraram no CRM &middot; ' + periodo + '</div></div>';
+  origens.slice(0, 3).forEach(function(o) {
+    html += '<div class="metric-card"><div class="m-label">' + o.label + '</div><div class="m-value" style="color:' + o.color + '">' + fmt(porOrigem[o.id]) + '</div><div class="m-detail">' + fmtPct(n > 0 ? porOrigem[o.id] / n : 0) + ' dos leads novos</div></div>';
+  });
+  html += '<div class="metric-card red"><div class="m-label">Ainda sem resposta</div><div class="m-value">' + fmt(r.grupos.sem_resposta) + '</div><div class="m-detail">' + fmtPct(n > 0 ? r.grupos.sem_resposta / n : 0) + ' nao responderam o 1o contato</div></div>';
+  html += '<div class="metric-card purple"><div class="m-label">Chegaram a reuniao</div><div class="m-value">' + fmt(r.reunioes) + '</div><div class="m-detail">' + fmtPct(n > 0 ? r.reunioes / n : 0) + ' dos leads novos</div></div>';
+  html += '<div class="metric-card green"><div class="m-label">Fecharam</div><div class="m-value">' + fmt(r.fechados) + '</div><div class="m-detail">' + fmtPct(n > 0 ? r.fechados / n : 0) + ' dos leads novos</div></div>';
+  document.getElementById('crm-novos-metrics').innerHTML = html;
+}
+
+function renderCrmNovosChart(novos, inicio) {
+  var now = new Date();
+  var hoje = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var primeiro = inicio;
+  if (!primeiro) {
+    novos.forEach(function(l) { if (l._d && (!primeiro || l._d < primeiro)) primeiro = l._d; });
+    if (!primeiro) primeiro = hoje;
+  }
+  var dias = Math.round((hoje - primeiro) / 86400000) + 1;
+  var modo = dias <= 31 ? 'dia' : (dias <= 200 ? 'semana' : 'mes');
+  function chave(d) {
+    if (modo === 'dia') return d.getFullYear() + '-' + crmPad(d.getMonth() + 1) + '-' + crmPad(d.getDate());
+    if (modo === 'semana') { var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x.getFullYear() + '-' + crmPad(x.getMonth() + 1) + '-' + crmPad(x.getDate()); }
+    return d.getFullYear() + '-' + crmPad(d.getMonth() + 1);
+  }
+  function rotulo(k) {
+    var p = k.split('-');
+    if (modo === 'dia') return p[2] + '/' + p[1];
+    if (modo === 'semana') return 'sem. ' + p[2] + '/' + p[1];
+    return p[1] + '/' + p[0];
+  }
+  // Eixo continuo (sem buracos)
+  var chaves = [], seen = {};
+  var cur = new Date(primeiro.getFullYear(), primeiro.getMonth(), primeiro.getDate());
+  while (cur <= hoje) {
+    var k = chave(cur);
+    if (!seen[k]) { seen[k] = true; chaves.push(k); }
+    if (modo === 'mes') cur.setMonth(cur.getMonth() + 1); else cur.setDate(cur.getDate() + 1);
+  }
+  var porOrigem = {};
+  novos.forEach(function(l) {
+    if (!l._d) return;
+    var k = chave(l._d);
+    if (!seen[k]) return;
+    porOrigem[l.origem] = porOrigem[l.origem] || {};
+    porOrigem[l.origem][k] = (porOrigem[l.origem][k] || 0) + 1;
+  });
+  var datasets = CRM_ORIGENS.filter(function(o) { return porOrigem[o.id]; }).map(function(o) {
+    return { label: o.label, data: chaves.map(function(k) { return porOrigem[o.id][k] || 0; }), backgroundColor: o.color, borderRadius: 3, stack: 'origem' };
+  });
+  destroyChart('crmNovos');
+  var ctx = document.getElementById('chartCrmNovos').getContext('2d');
+  charts.crmNovos = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: chaves.map(rotulo), datasets: datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'right', labels: { padding: 10, font: { size: 11 } } },
-        tooltip: { callbacks: { label: function(c) { return c.label + ': ' + fmt(c.raw) + ' (' + (c.raw / total * 100).toFixed(1).replace('.', ',') + '%)'; } } }
+        legend: { position: 'top', labels: { boxWidth: 12, padding: 14, font: { size: 11 } } },
+        tooltip: { mode: 'index', callbacks: {
+          footer: function(items) { var t = 0; items.forEach(function(i) { t += i.raw; }); return 'Total: ' + fmt(t); }
+        } }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 20 } },
+        y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' }, ticks: { precision: 0 } }
       }
     }
   });
+}
 
-  // Horizontal bar chart by group
-  destroyChart('crmGroups');
-  var ctx2 = document.getElementById('chartCrmGroups').getContext('2d');
-  charts.crmGroups = new Chart(ctx2, {
+function renderCrmTabela() {
+  var crm = DATA.crmData;
+  if (!crm || !crm.leads) return;
+  var colByOrder = {};
+  crm.columns.forEach(function(c) { colByOrder[c.order] = c; });
+  var busca = (document.getElementById('crmBusca').value || '').toLowerCase().trim();
+  var rows = CRM_NOVOS.filter(function(l) {
+    return !busca || (l.nome || '').toLowerCase().indexOf(busca) >= 0 || (l.tel || '').replace(/\D/g, '').indexOf(busca.replace(/\D/g, '') || '§') >= 0;
+  });
+  var LIM = CRM_TABELA_TUDO ? 2000 : 50;
+  var now = new Date();
+  var hoje = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var ontem = new Date(hoje); ontem.setDate(ontem.getDate() - 1);
+  document.getElementById('crm-tabela-badge').textContent = fmt(rows.length) + ' LEADS';
+  if (!rows.length) {
+    document.getElementById('crm-tabela').innerHTML = '<div class="loading" style="height:80px">Nenhum lead entrou no periodo selecionado</div>';
+    return;
+  }
+  var html = '<table class="crm-table"><thead><tr><th>Entrou em</th><th>Lead</th><th>Telefone</th><th>Origem</th><th>Etapa atual</th><th>Ultima mensagem</th><th></th></tr></thead><tbody>';
+  rows.slice(0, LIM).forEach(function(l) {
+    var col = colByOrder[l.col] || {};
+    var g = crmGrupoInfo(l._g);
+    var quando = '';
+    if (l._d) {
+      var d0 = new Date(l._d.getFullYear(), l._d.getMonth(), l._d.getDate());
+      if (d0.getTime() === hoje.getTime()) quando = '<span class="crm-pill crm-pill-novo">hoje</span>';
+      else if (d0.getTime() === ontem.getTime()) quando = '<span class="crm-pill crm-pill-novo">ontem</span>';
+    }
+    var ult = '—';
+    if (l._u) {
+      var quem = l.ult_tipo === 'in' ? '<span class="crm-in">lead escreveu</span>' : (l.ult_tipo === 'out' ? '<span class="crm-out">enviada ao lead</span>' : '');
+      ult = crmFmtData(l._u, true) + (quem ? '<br><small>' + quem + '</small>' : '');
+    }
+    html += '<tr>';
+    html += '<td style="white-space:nowrap"><strong>' + crmFmtData(l._d, true) + '</strong> ' + quando + '</td>';
+    html += '<td>' + crmEsc(l.nome) + (l.campanha ? '<br><small class="crm-camp" title="' + crmEsc(l.campanha) + '">' + crmEsc(l.campanha.length > 40 ? l.campanha.slice(0, 40) + '…' : l.campanha) + '</small>' : '') + '</td>';
+    html += '<td style="white-space:nowrap">' + crmEsc(l.tel || '—') + '</td>';
+    html += '<td>' + crmPill(crmOrigemInfo(l.origem)) + '</td>';
+    html += '<td>' + crmPill(g) + '<br><small class="crm-camp">' + crmEsc(col.name || '?') + '</small></td>';
+    html += '<td style="white-space:nowrap">' + ult + '</td>';
+    html += '<td><a class="crm-link" href="https://app.atendedireito.com.br/inbox/' + encodeURIComponent(l.ns) + '" target="_blank" rel="noopener">abrir</a></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  if (rows.length > 50) {
+    html += '<div style="text-align:center;padding:12px 0 2px"><button class="refresh-btn" onclick="crmTabelaToggle()">' +
+      (CRM_TABELA_TUDO ? 'Mostrar so os 50 mais recentes' : 'Mostrar todos os ' + fmt(rows.length) + ' leads') + '</button></div>';
+  }
+  document.getElementById('crm-tabela').innerHTML = html;
+}
+
+function renderCrmFunilOrigem(leads) {
+  var porOrigem = {};
+  leads.forEach(function(l) { (porOrigem[l.origem] = porOrigem[l.origem] || []).push(l); });
+  var ordem = CRM_ORIGENS.filter(function(o) { return porOrigem[o.id]; });
+  function linha(nome, lista, destaque) {
+    var r = crmResumo(lista, function(l) { return l._g; });
+    var n = lista.length;
+    function cel(v, base) { return '<td><strong>' + fmt(v) + '</strong> <small class="crm-camp">' + fmtPct(base > 0 ? v / base : 0) + '</small></td>'; }
+    return '<tr' + (destaque ? ' class="crm-total"' : '') + '><td>' + nome + '</td><td><strong>' + fmt(n) + '</strong> <small class="crm-camp">' + fmtPct(leads.length > 0 ? n / leads.length : 0) + ' do CRM</small></td>' +
+      cel(r.responderam, n) + cel(r.reunioes, n) + cel(r.compareceram, n) + cel(r.fechados, n) + cel(r.perdidos, n) +
+      '<td><strong>' + fmtPct(r.compareceram > 0 ? r.fechados / r.compareceram : 0) + '</strong></td></tr>';
+  }
+  var html = '<table class="crm-table"><thead><tr><th>Origem</th><th>Leads</th><th>Responderam</th><th>Chegaram a reuniao</th><th>Compareceram</th><th>Contrato / Cliente</th><th>Perdidos</th><th>Fech. / Compar.</th></tr></thead><tbody>';
+  ordem.forEach(function(o) { html += linha(crmPill(o), porOrigem[o.id], false); });
+  html += linha('<strong>Todas</strong>', leads, true);
+  html += '</tbody></table>';
+  document.getElementById('crm-funil-origem').innerHTML = html;
+}
+
+function renderCrmOrigemEtapa(leads) {
+  var porOrigem = {};
+  leads.forEach(function(l) { porOrigem[l.origem] = porOrigem[l.origem] || {}; porOrigem[l.origem][l._g] = (porOrigem[l.origem][l._g] || 0) + 1; });
+  var origens = CRM_ORIGENS.filter(function(o) { return porOrigem[o.id]; });
+  var totais = origens.map(function(o) { var t = 0; CRM_GRUPOS.forEach(function(g) { t += porOrigem[o.id][g.id] || 0; }); return t; });
+  var datasets = CRM_GRUPOS.map(function(g) {
+    return { label: g.label, backgroundColor: g.color, borderRadius: 2, stack: 'etapa',
+             data: origens.map(function(o, i) { return totais[i] > 0 ? (porOrigem[o.id][g.id] || 0) / totais[i] * 100 : 0; }),
+             _abs: origens.map(function(o) { return porOrigem[o.id][g.id] || 0; }) };
+  }).filter(function(ds) { return ds._abs.some(function(v) { return v > 0; }); });
+  destroyChart('crmOrigemEtapa');
+  var ctx = document.getElementById('chartCrmOrigemEtapa').getContext('2d');
+  charts.crmOrigemEtapa = new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels: filteredNames,
-      datasets: [{ label: 'Leads', data: filteredValues, backgroundColor: filteredColors, borderRadius: 6, barPercentage: .6 }]
-    },
+    data: { labels: origens.map(function(o, i) { return o.label + ' (' + fmt(totais[i]) + ')'; }), datasets: datasets },
     options: {
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: function(c) { return fmt(c.raw) + ' leads (' + (c.raw / total * 100).toFixed(1).replace('.', ',') + '%)'; } } }
+        legend: { position: 'top', labels: { boxWidth: 12, padding: 14, font: { size: 11 } } },
+        tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': ' + fmt(c.dataset._abs[c.dataIndex]) + ' (' + c.raw.toFixed(1).replace('.', ',') + '%)'; } } }
       },
       scales: {
-        x: { beginAtZero: true, grid: { color: 'rgba(42,46,61,.5)' } },
-        y: { grid: { display: false } }
+        x: { stacked: true, min: 0, max: 100, grid: { color: 'rgba(42,46,61,.5)' }, ticks: { callback: function(v) { return v + '%'; } } },
+        y: { stacked: true, grid: { display: false } }
       }
     }
   });
