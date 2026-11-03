@@ -1,27 +1,27 @@
 {
-  "updated_at": "2026-10-28T19:32:09.000Z",
+  "updated_at": "2026-11-03T16:37:05.000Z",
   "board_id": 2568,
   "board_name": "CRM - Comercial",
   "flow_ns": "f175863",
-  "total": 2407,
+  "total": 2425,
   "columns": [
     {
       "order": 1,
       "name": "LEAD NÃO RESPONDEU PRIMEIRO CONTATO",
       "ns": "f175863bd70851bn1202717",
-      "total": 1050
+      "total": 1057
     },
     {
       "order": 2,
       "name": "LEAD EM ATENDIMENTO",
       "ns": "f175863bd70851bn1202719",
-      "total": 295
+      "total": 296
     },
     {
       "order": 3,
       "name": "LEAD QUALIFICADO",
       "ns": "f175863bd70851bn1499221",
-      "total": 202
+      "total": 206
     },
     {
       "order": 4,
@@ -39,7 +39,7 @@
       "order": 6,
       "name": "LEAD NÃO Compareceu à REUNIÃO",
       "ns": "f175863bd70851bn833693",
-      "total": 109
+      "total": 110
     },
     {
       "order": 7,
@@ -57,13 +57,13 @@
       "order": 9,
       "name": "Contrato Assinado",
       "ns": "f175863bd70851bn871983",
-      "total": 90
+      "total": 89
     },
     {
       "order": 10,
       "name": "Contrato Assinado - ASSESSORIA ***",
       "ns": "f175863bd70851bn1369051",
-      "total": 56
+      "total": 58
     },
     {
       "order": 11,
@@ -75,7 +75,7 @@
       "order": 12,
       "name": "Lead Desqualificado",
       "ns": "f175863bd70851bn551149",
-      "total": 212
+      "total": 215
     },
     {
       "order": 13,
@@ -88,6 +88,12 @@
       "name": "MENSAGENS COM ERRO",
       "ns": "f175863bd70851bn1797409",
       "total": 2
+    },
+    {
+      "order": 999,
+      "name": "LEAD SEM RESPOSTA APÓS A IA - LIGAR",
+      "ns": "f175863bd70851bn2283501",
+      "total": 1
     }
   ]
 }
